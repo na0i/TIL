@@ -12,27 +12,24 @@ for tc in range(T):
     dc = [0, 0, -1, 1]
     c = start
     r = 0
+
     check = 0
-
     for d in range(4):
-        r += dr[d]
-        c += dc[d]
+        tmp_xy = miro[r+dr[d]][c+dc[d]]
         if 0 <= r < N and 0 <= c < N:
-            print(d)
-            print(r, c)
-
-            tmp_xy = miro[r][c]
             if tmp_xy == 1:
-                continue
+                r -= dr[d]
+                c -= dc[d]
 
             elif tmp_xy == 2:
                 check = 1
                 break
 
             elif tmp_xy == 0:
-                miro[r-dr[d]][c-dc[d]] = 1
-                move = tmp_xy
-                break
+                miro[r][c] = 4
+                r += dr[d]
+                c += dc[d]
         else:
-            continue
+            r -= dr[d]
+            c -= dc[d]
     print(check)
