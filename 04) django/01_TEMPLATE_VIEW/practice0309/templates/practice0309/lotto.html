@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}
+  practice0309
+{% endblock title %}
+
+
+{% block content %}
+  <h1>Practice0309</h1>
+  <ul>
+    {% for key, value in result.items %}
+      <li> {{no}} => {{ key }} : {{ value }} </li>
+    {% endfor %}
+  </ul>
+{% endblock content %}
+

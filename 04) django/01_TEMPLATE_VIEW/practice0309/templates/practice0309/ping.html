@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}ping{% endblock title %}
+
+{% block content %}
+<h1>ping</h1>
+<form action="{% url 'pong' %}" method="GET">
+  <label for="kor-name">한글이름</label>
+  <input type="text" name="kor-name" id="kor-name">
+
+  <label for="eng-name">English name</label>
+  <input type="text" name="eng-name" id="eng-name">
+
+  <input type="submit" value="전송!">
+</form>
+{% endblock content %}
