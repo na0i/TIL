@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Detail pages{% endblock title %}
+
+{% block body %}
+<form action="{% url 'create' %}" method="GET">
+  <div>
+    name: <input type="text" name="name">
+  </div>
+  <div>
+    age: <input type="text" name="age">
+  </div>
+  <div>
+    major: <input type="text" name="major">
+  </div>
+  hobby: <textarea name="" id="" cols="30" rows="10"></textarea>
+
+  <div>
+    <input type="submit" class="btn btn-primary">
+  </div>
+</form>
+{% endblock body %}
