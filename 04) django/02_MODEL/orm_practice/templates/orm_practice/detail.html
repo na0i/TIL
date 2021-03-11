@@ -1,10 +1,20 @@
 {% extends 'base.html' %}
-{% block title %}Detail pages{% endblock title %}
+{% block title %}Detail page{% endblock title %}
 
 {% block body %}
   <h1>This is Detail page</h1>
-  <h2>{{ students.id}} => {{ student.name }}</h2>
-  <h3>{{ student.age }} | {{ student.major}} </h3>
-  <h4>{{ student.hobby }}</h4>
+  <h2>{{ student.id }} => {{ student.name }}</h2>
+  <h3>{{ student.age }} | {{ student.major }}</h3>
+  <p>{{ student.intro }}</p>
   <a href="{% url 'index' %}" class="btn btn-primary">Index</a>
+  <a href="{% url 'edit' student.id %}" class="btn btn-secondary">Edit</a>
+  <form action= "{% url 'delete' student.id %}" method="POST">
+    {% csrf_token %}
+    <input
+      type="submit"
+      class="btn btn-danger"
+      onclick="return confirm('삭제하실?')"
+      value = "Delete"
+      >
+  </form>
 {% endblock body %}

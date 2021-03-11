@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Detail pages{% endblock title %}
+{% block title %}New page{% endblock title %}
 
 {% block body %}
 <form action="{% url 'create' %}" method="GET">
@@ -12,7 +12,7 @@
   <div>
     major: <input type="text" name="major">
   </div>
-  hobby: <textarea name="" id="" cols="30" rows="10"></textarea>
+  intro: <textarea name="intro" cols="30" rows="5"></textarea>
 
   <div>
     <input type="submit" class="btn btn-primary">
