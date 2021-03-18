@@ -1,4 +1,4 @@
-"""crud URL Configuration
+"""my_pjt URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
@@ -15,9 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+# dev 모드에서는 사용자 업로드 미디어를 서빙하기 위해 아래 코드가 필요합니다.
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('crud/', include('articles.urls')),
-    path('board/', include('board.urls')),
-]
+    path('uploader/', include('uploader.urls')),
+] + static(settings.MEDIA_URL, documents_root=settings.MEDIA_ROOT)

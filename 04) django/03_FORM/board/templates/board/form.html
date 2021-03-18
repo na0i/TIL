@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block block %}
+<h1>Index</h1>
+
+<ul>
+{% for reservation in reservaions %}
+  <li><a href="{% url 'board:detail' reservation.pk %}">{{ reseravtion.name }}</a></li>
+{% endfor %}
+</ul>
+
+{% endblock block %}
+
