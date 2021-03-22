@@ -65,7 +65,7 @@ views.index는 views.py 파일의 index 함수를 의미
 
 #### 1 - 2) view
 
-```
+```python
 from django.http import HttpResponse
 
 
