@@ -69,3 +69,54 @@ AUTH_USER_MODEL = 'myapp.MyUser'
 ```
 
 This dotted pair describes the name of the Django app (which must be in your [`INSTALLED_APPS`](https://docs.djangoproject.com/en/dev/ref/settings/#std:setting-INSTALLED_APPS)), and the name of the Django model that you wish to use as your user model.
+
+
+
+
+
+```python
+def get_user_model():
+    """
+    Return the User model that is active in this project.
+    """
+    try:
+        return django_apps.get_model(settings.AUTH_USER_MODEL, require_ready=False)
+    except ValueError:
+        raise ImproperlyConfigured("AUTH_USER_MODEL must be of the form 'app_label.model_name'")
+    except LookupError:
+        raise ImproperlyConfigured(
+            "AUTH_USER_MODEL refers to model '%s' that has not been installed" % settings.AUTH_USER_MODEL
+        )
+
+
+def get_user(request):
+    """
+    Return the user model instance associated with the given request session.
+    If no user is retrieved, return an instance of `AnonymousUser`.
+    """
+    from .models import AnonymousUser
+    user = None
+    try:
+        user_id = _get_user_session_key(request)
+        backend_path = request.session[BACKEND_SESSION_KEY]
+    except KeyError:
+        pass
+    else:
+        if backend_path in settings.AUTHENTICATION_BACKENDS:
+            backend = load_backend(backend_path)
+            user = backend.get_user(user_id)
+            # Verify the session
+            if hasattr(user, 'get_session_auth_hash'):
+                session_hash = request.session.get(HASH_SESSION_KEY)
+                session_hash_verified = session_hash and constant_time_compare(
+                    session_hash,
+                    user.get_session_auth_hash()
+                )
+                if not session_hash_verified:
+                    request.session.flush()
+                    user = None
+
+    return user or AnonymousUser()
+
+```
+
