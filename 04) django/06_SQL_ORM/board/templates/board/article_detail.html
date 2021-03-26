@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Detail</h1>
+<h2>{{ article.title }}</h2>
+
+<p>{{ article.content }}</p>
+
+<hr>
+
+<form action="{% url 'board:create_comment' article.pk %}" method="POST">
+  {% csrf_token %}
+  {{ comment_form.as_p }}
+  <button>write comment</button>
+</form>
+
+<hr>
+
+<ul>
+  {% for comment in comments %}
+    <li>{{ comment.content }}</li>
+  {% endfor %}
+</ul>
+
+
+{% endblock content %}

@@ -1,0 +1,1 @@
+DELETE FROM classmates WHERE id=14;
