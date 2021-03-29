@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class='container mt-3 mb-3'>
+  <div class='text-center'>
+    <h3>INDEX</h3>
+    {% comment %} <a href="{% url 'community:create' %}"> CREATE </a> {% endcomment %}
+
+    {% for review in reviews %}
+      <div>
+        <a href="{% url 'community:detail' review.pk %}">{{ review.title }}</a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock content %}

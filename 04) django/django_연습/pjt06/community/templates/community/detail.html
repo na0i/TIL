@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h3>제목: {{ review.title }}</h3>
+  <p>내용: {{ review.content }}</p>
+  <h4>영화제목: {{ review.movie_title }}</h4>
+  <p>평점: {{ review.rank }}</p>
+  <p>생성일자: {{ review.created_at }}</p>
+  <p>수정일자: {{ review.updated_at }}</p>
+
+
+  {% for comment in comments %}
+    <p>
+      {{ comment }}
+    </p>
+  {% endfor %}
+
+  <form action="{% url 'community:comment' review.pk %}" method = 'POST'>
+    {% csrf_token %}
+    {{ comment_form.as_p }}
+    <button>SUBMIT</button>
+  </form>
+{% endblock content %}
