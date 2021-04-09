@@ -1,7 +1,7 @@
 import sys
 sys.stdin = open('1249.txt', 'r')
 
-
+# 상하좌우
 dr = [-1, 1, 0, 0]
 dc = [0, 0, -1, 1]
 
@@ -12,32 +12,37 @@ def bfs(r, c):
     visit[r][c] = 1
 
     while path_Q:
-        now = path_Q.pop()
-        r = now[0]
-        c = now[1]
+        curr_r, curr_c = path_Q.pop()
 
         for d in range(4):
-            nr = r + dr[d]
-            nc = c + dc[d]
+            nr = curr_r + dr[d]
+            nc = curr_c + dc[d]
 
             if nr < 0 or nr > N or nc < 0 or nc > N:
                 continue
 
-            elif nr == N and nc == N-1:
-                return dist[r][c]
+            elif nr == N-1 and nc == N-1:
+                return dist
 
             elif visit[nr][nc] == 0:
                 visit[nr][nc] = 1
+                dist[nr][nc] = dist[curr_r][curr_c] + road[nr][nc]
                 path_Q.append((nr, nc))
-                dist[nr][nc] = dist[r][c] + road[r][c]
+                print(nr, nc)
 
-# T = int(input())
+
+
+T = int(input())
 for tc in range(1):
     N = int(input())
-    road = [list(int(input())) for _ in range(N)]
+    road = [list(input()) for _ in range(N)]
+    for i in range(N):
+        for j in range(N):
+            road[i][j] = int(road[i][j])
+
     visit = [[0] * N for _ in range(N)]
     dist = [[0] * N for _ in range(N)]
     path_Q = []
 
-    bfs(0,0)
+    bfs(0, 0)
 
