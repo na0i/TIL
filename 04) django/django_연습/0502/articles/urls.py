@@ -10,5 +10,5 @@ url_patterns = [
     path('<int:article_pk>/update/', views.article_update, name = 'update'),
     path('<int:article_pk>/delete/', views.article_delete, name = 'delete'),
     path('<int:article_pk>/comments/', views.comments_create, name = 'comments_create'),
-    path('<int:article_pk>/comments/<int:comment_pk>', views.)
+    path('<int:article_pk>/comments/<int:comment_pk>', views.comments_delete, name = 'comments_delete'),
 ]
