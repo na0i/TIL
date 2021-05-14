@@ -519,7 +519,7 @@ reverse, sortBy, range, random 등
 
 
 
----------------
+----
 
 ### 5) SFC
 
@@ -593,9 +593,45 @@ props의 이름 컨벤션: kebab-case(HTML), camelCase(script)
 
 
 
+사용예시)
+
+```vue
+// App.vue (부모 컴포넌트)
+<template>
+	<NewComponent my-message="a prop data"/>
+</template>
+```
+
+```vue
+// Newcomponent.vue (자식 컴포넌트)
+<template>
+	<div>
+    	<h2>{{ myMessage }}</h2>	//props 사용
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'NewComponent',
+    props: {						//props 명시
+        myMessage: {
+        	type: String,
+            required: True,
+        }		
+    }
+}
+</script>
+```
+
+
+
+
+
 ##### 2. Emit event
 
-부모 컴포넌트는 v-on을 사용해 자식 컴포넌트가 보낸 이벤트 청취
+부모 컴포넌트는 v-on(`@`)을 사용해 자식 컴포넌트가 보낸 이벤트 청취
+
+이벤트 이름 kebab-case 권장
 
 
 
@@ -603,6 +639,48 @@ props의 이름 컨벤션: kebab-case(HTML), camelCase(script)
 
 - event가 트리거
 - 추가 인자: 리스너의 콜백 함수
+
+
+
+사용예시)
+
+```vue
+// Newcomponent.vue (자식 컴포넌트)
+<template>
+	<div>
+        <input @keyup.enter="childInputChange" v-model="childInputData" type="text">
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'NewComponent',
+    // data는 함수로 정의한다(scope 문제 때문에)
+    data: function () {
+        return {
+            childInputData: '',
+    	},
+	},
+    methods: {
+        childInputChange: function() {
+            // $emit('emit할 이벤트 이름', 같이 보낼 data)
+            this.$emit('child-input-change', this.childInputData)
+        }
+    }  
+</script>
+```
+
+```vue
+// App.vue (부모 컴포넌트)
+<template>
+	// child-input-change를 청취하면 parentGetChange 메서드를 실행
+	<NewComponent @child-input-change="parentGetChange"/>
+</template>
+```
+
+
+
+
 
 
 
@@ -616,6 +694,16 @@ props는 언제나 부모 >  자식
 
 ### 8) Vue Router
 
+```
+vue add router
+```
+
+App.vue에 router 부분이 생기고 views라는 폴더가 생성된다.
+
+index.js는 django의 urls.py와 유사한 기능을 한다.
+
+
+
 ##### 1. router-link
 
 index.js 에 정의한 경로대로 특정 컴포넌트와 매핑
@@ -624,8 +712,285 @@ history mode에서 클릭 이벤트를 차단해 페이지 다시 로드를 막�
 
 a태그 이지만 GET 요청 이벤트가 제거된 형태
 
+즉, 라우터 링크를 통해 페이지 전환은 아니지만 우리가 보는 컴포넌트가 새로 렌더링 되어 페이지 전환 효과를 줌
+
 
 
 ##### 2. router-view
 
 실제 component가 DOM에 부착되어 보이는 자리
+
+router-link를 클릭하면 index.js에 정의한 컴포넌트와 연결
+
+
+
+##### 3. history mode
+
+HTML history API를 사용해 router를 구현 한 것
+
+히스토리는 남기지만 실제 페이지는 이동하지 X
+
+
+
+SPA의 단점이 URL의 변화가 없다는 점인데 history mode를 이용해 이를 해결 할 수 있음
+
+뒤로가기, 앞으로 가기 등과 같은 기능이 가능한 이유!
+
+
+
+
+
+##### 4. how to use ROUTER
+
+```vue
+// index.js
+
+Vue.use(VueRouter)
+
+const routes = [
+	{
+		path: '/about',
+		name: 'About',
+		component: About,
+	},
+]
+```
+
+```vue
+// App.vue
+<template>
+	<div id="app">
+    	<div id="nav">
+           <router-link :to="{ name: 'About' }"></router-link>
+    	</div>
+        <router-view/>
+    </div>
+</template>
+```
+
+
+
+
+
+### 9) Vuex
+
+#### [1] Vuex 란
+
+Vue.js 애플리케이션에 대한 `상태 관리 패턴` + `라이브러리`
+
+모든 컴포넌트에 대한 중앙 집중식 저장소 역할
+
+state가 예측 가능한 방식으로만 변경될 수 있도록 보장
+
+각 컴포넌트에서는 중앙 집중 저장소의 state만 신경쓰면 됨
+
+규모가 큰(컴포넌트 중첩이 깊은) 프로젝트에 편리
+
+
+
+#### [2] Vuex Core Concept
+
+![image-20210513234019537](VUE 총정리.assets/image-20210513234019537.png)
+
+##### 1. STATE
+
+중앙에서 관리하는 모든 상태 정보(`data`)
+
+`mutations`에 정의된 메서드에 의해 변경
+
+state는 오로지 mutations 메서드에 의해 조작됨
+
+
+
+##### 2. ACTIONS
+
+`dispatch()` 메서드에 의해 호출
+
+data fetching 등의 작업을 수행
+
+항상 `context`가 인자로 넘어옴
+
+
+
+##### 3. MUTATIONS
+
+`commit()` 메서드에 의해 호출
+
+동기적인 코드만 작성(비동기적으로 동작하면 state 변화 시점 달라질 수 있기 때문)
+
+첫번째 인자로 `state`가 넘어옴
+
+
+
+##### 4. GETTERS
+
+state를 변경하지 않고 활용하여 계산 수행
+
+computed와 유사
+
+첫번째 인자로 `state` 사용(state를 기준으로 계산해야 하므로)
+
+
+
+##### 5.  총정리 및 예시
+
+- 동작 순서
+
+  `COMPONENTS` → dispatch → `ACTIONS` → commit → `MUTATIONS` → `STATE`
+
+
+
+- 1] component에서 시작
+
+  2] context를 받아 dispatch를 통해 action 호출
+
+  3] commit를 통해 mutation 호출
+
+  4] mutation에 의해 state 변경
+
+
+
+#### [3] 컴포넌트 바인딩 헬퍼
+
+`mapState`, `mapGetter`, `mapAction`, `mapMutations`
+
+```vue
+import { mapState(컴포넌트 바인딩 헬퍼 명) } from 'vuex'
+```
+
+
+
+##### 1. mapState
+
+computed와 state를 매핑(store의 state와 연결되어있다)
+
+객체를 반환
+
+
+
+예시) 원래 코드
+
+```vue
+<script>
+export default {
+    // 생략 //
+    computed: {
+        todos: function () {
+            return this.$store.state.todos
+        }
+    }
+}
+</script>
+```
+
+computed를 이용해 store의 state에 있는 todos를 가져옴
+
+
+
+예시) mapState 사용 코드
+
+```vue
+import { mapState } from 'vuex'
+
+<script>
+export default {
+    // 생략 //
+    computed: {
+		...mapState([
+            'todos',
+        ])
+    }
+}
+</script>
+```
+
+
+
+##### 2.mapGetters
+
+getter의 평가된 값을 반환하는 컴포넌트 계산 옵션을 만듦
+
+
+
+예시) 원래 코드
+
+```vue
+<script>
+export default {
+    // 생략 //
+    computed: {
+		completedTodosCount: function() {
+            return this.$store.getters.completedTodosCount
+        },
+        uncompletedTodosCount: function() {
+            return this.$store.getters.uncompletedTodosCount
+        },
+    }
+}
+</script>
+```
+
+
+
+예시) mapGetters 사용 코드
+
+```vue
+import { mapGetters } from 'vuex'
+
+<script>
+export default {
+    // 생략 //
+    computed: {
+		...mapGetters([
+            'completedTodosCount',
+            'uncompletedTodosCount',
+        ])
+    }
+}
+</script>
+```
+
+
+
+##### 3. mapActions
+
+액션을 전달하는 컴포넌트 메서드 옵션을 만듦
+
+dispatch의 역할까지만
+
+
+
+예시) 원래 코드
+
+```vue
+<script>
+export default {
+    // 생략 //
+    methods: {
+		deleteTodo: function () {
+            this.$store.dispatch('deleteTodo', this.todo)
+        }
+    }
+}
+</script>
+```
+
+
+
+예시) mapActions 사용 코드
+
+```vue
+import { mapActions } from 'vuex'
+
+<script>
+export default {
+    // 생략 //
+    computed: {
+		...mapActions([
+            'deleteTodo',  // 추가 인자는 template에서 넘기기
+        ])
+    }
+}
+</script>
+```
+
