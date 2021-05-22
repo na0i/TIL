@@ -1,0 +1,3 @@
+router 설치
+axios 설치
+install pillow
