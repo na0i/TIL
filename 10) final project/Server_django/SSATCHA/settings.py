@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,10 +38,12 @@ INSTALLED_APPS = [
     'movies',
     
     # 3rd party apps
+    'django_extensions',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_auth',
+    'imagekit',
 
     # sign-up 관련 필요한 apps
     'rest_auth.registration',
@@ -55,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',  #  시간 설정 위해 추가
 ]
 
 MIDDLEWARE = [
@@ -158,3 +162,7 @@ REST_FRAMEWORK = {
 
 # django.contrib.sites 에서 사용
 SITE_ID = 1
+
+# profile image
+MEDIA_URL = '/media/'   # URL 패턴
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')    # IMAGE 저장 위치
