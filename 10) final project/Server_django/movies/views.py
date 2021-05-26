@@ -1,14 +1,19 @@
 from django.shortcuts import get_object_or_404, HttpResponseRedirect
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+
+from django.contrib.auth.models import User
 
 import pprint
 import requests
 
 from .models import Movie, Genre
 from .api_request import get_genre, save_movie, recommend_movies, get_movie_info, search, get_providers, get_genre_list
-from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer
+from .serializers import GenreSerializer, MovieSerializer, MovieListSerializer, MovieLikeUserSerializer
 
 
 # 영화 장르 정보 가져오기
@@ -39,39 +44,45 @@ def get_genre_data(request):
 def fetch_initial_datum(request):
 
     # 관리자의 경우에만 최초 데이터 불러오기 가능
-    if request.user.is_superuser:
+    # if request.user.is_superuser:
 
-        conditions = ['popular', 'top_rated']
+    conditions = ['popular', 'top_rated']  # top_rated
 
-        results = {
-            'success': 0,
-            'failed': [
-                0,
-                {
-                    'title': []
-                }
-            ]
-        }
+    results = {
+        'success': 0,
+        'failed': [
+            0,
+            {
+                'title': []
+            }
+        ]
+    }
 
-        # 인기순 100/
-        # 평점 높은 순 100/
-        for condition in conditions:
-            for i in range(1, 201):
-                datum = recommend_movies(condition, page=i)
-                for data in datum:
-                    movie_pk = data['id']
-                    if not Movie.objects.all().filter(pk=movie_pk):
-                        save_movie(data)
-                        results['success'] += 1
-                    else:
-                        results['failed'][0] += 1
-                        results['failed'][1]['title'].append(data['title'])
+    # 인기순 100/
+    # 평점 높은 순 100/
+    for condition in conditions:
+        for i in range(1, 201):
+            datum = recommend_movies(condition, page=i)
+            for data in datum:
+                if data['popularity'] < 10:
+                    continue
 
-        return Response(data=results)
+                if data['vote_count'] < 30:
+                    continue
+
+                movie_pk = data['id']
+                if not Movie.objects.all().filter(pk=movie_pk):
+                    save_movie(data)
+                    results['success'] += 1
+                else:
+                    results['failed'][0] += 1
+                    results['failed'][1]['title'].append(data['title'])
+
+    return Response(data=results)
 
     # 관리자가 아닌 경우에는, 메인으로 이동
-    else:
-        return HttpResponseRedirect('http://127.0.0.1:8000/')
+    # else:
+    #     return HttpResponseRedirect('http://127.0.0.1:8000/')
 
 
 # 영화 생성 혹은 영화 전체 리스트
@@ -143,13 +154,17 @@ def movie_list_or_create(request):
 
     # 전체 영화 리스트
     elif request.method == 'GET':
-        movies = Movie.objects.all()
-        serializer = MovieListSerializer(movies, many=True)
+        movies = Movie.objects.all()[:4000]
+        serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 # 단일 영화 상세 페이지
-@api_view(['GET'])
+'''
+이거 없다면 추가하는 건 일단 다른 함수든 연결해야 할 것 같습니다. 
+애초에 영화 데이터 자체를 어드민만 추가할 수 있는게 명세라서 좀 더 고민이 필요해 보입니다. 
+'''
+@api_view(['GET', 'POST'])
 def get_or_create_movie(request, movie_pk):
     # DB에 없다면,
     if not Movie.objects.all().filter(pk=movie_pk):
@@ -161,3 +176,23 @@ def get_or_create_movie(request, movie_pk):
         movie = get_object_or_404(Movie, pk=movie_pk)
         serializer = MovieSerializer(movie)
         return Response(serializer.data)
+
+
+# 영화 좋아요
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def like_movie(request, movie_pk):
+    movie = get_object_or_404(Movie, pk=movie_pk)
+    user = request.user
+
+    # 좋아요 취소
+    if movie.like_users.filter(username=user).exists():
+        movie.like_users.remove(user)
+
+    # 좋아요
+    else:
+        movie.like_users.add(user)
+
+    serializer = MovieLikeUserSerializer(movie)
+    return Response(serializer.data)
+

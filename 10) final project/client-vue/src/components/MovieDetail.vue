@@ -4,7 +4,18 @@
 
     <RouterLink :to="`/${movies.selectedMovie.id}/review/`" class=" btn btn-primary"> 리뷰 작성 </RouterLink>
 
-    {{ movies.selectedMovie }}
+    <span v-if="isMovieLiked">
+      <button @click="likeMovie(movies.selectedMovie.id)" class="btn btn-secondary"> 좋아요 취소 </button>
+    </span>
+    <span v-else>
+      <button @click="likeMovie(movies.selectedMovie.id)" class="btn btn-danger"> 좋아요 </button>
+    </span>
+    <hr>
+
+    <h3>
+      {{ movies.selectedMovie.title }}
+    </h3>
+
     <div>
       구매: {{ movies.selectedMovieProviders.buy }}
     </div>
@@ -14,18 +25,43 @@
     <div>
       대여: {{ movies.selectedMovieProviders.rent }}
     </div>
+
+    <hr>
+
+    <h2> 리뷰 </h2>
+
+    <ul v-if="reviews.length">
+      <li v-for="(review, idx) in reviews" :key="idx" @click="fetchReview(movies.selectedMovie.id, review.id)">
+        <RouterLink :to="`/${movies.selectedMovie.id}/review/${review.id}/`">
+          {{ review }}
+        </RouterLink>
+      </li>
+    </ul>
+
   </div>
 </template>
 
 <script>
-import {mapState} from "vuex";
+import {mapActions, mapState, mapGetters} from "vuex";
 
 export default {
   name: "MovieDetail",
-  actions:{
+  methods: {
+    ...mapActions(['likeMovie']),
+    fetchReview(movie, review) {
+      this.$store.dispatch('fetchReview', { movie: movie, review: review})
+    },
   },
   computed: {
-    ...mapState(['movies'])
+    ...mapState(['movies']),
+    ...mapGetters(['isMovieLiked']),
+    reviews() {
+      if (this.movies.selectedMovie.reviews === undefined) {
+        return []
+      } else {
+      return this.movies.selectedMovie.reviews
+      }
+    }
   },
 }
 </script>

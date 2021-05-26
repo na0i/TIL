@@ -1,15 +1,13 @@
 from django.db import models
 from django.conf import settings
+from movies.models import Movie
 
 
 class Review(models.Model):
-    num_choices = zip(range(0, 5), range(0, 5))
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=100)
-    movie = models.CharField(max_length=50)  # 영화도 검색해서 고를 수 있게 하고 싶습니다..
-    rank = models.IntegerField(choices=num_choices)
-    # rank = models.IntegerField()  # 이거 1-5점 선택..
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='reviews')
+    rank = models.IntegerField()  # 이거 1-5점 선택..
     content = models.TextField(verbose_name='Description')
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_reviews')
     created_at = models.DateTimeField(auto_now_add=True)

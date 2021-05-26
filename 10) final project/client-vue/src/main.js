@@ -5,7 +5,12 @@ import store from './store'
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap"
 
+import VueCookies from 'vue-cookies'
+
 Vue.config.productionTip = false
+
+// vue-cookies
+Vue.use(VueCookies)
 
 new Vue({
   router,

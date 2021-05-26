@@ -1,13 +1,18 @@
 <template>
-  <div id="app">
-    <div id="navbar navbar-dark bg-dark">
-      <RouterLink to="/">SSATCHA</RouterLink> |
-      <!-- <RouterLink :to="{ name: 'List' }">Articles</RouterLink> | -->
-      <RouterLink v-if="!isLoggedIn" :to="{ name: 'Signup' }">Signup | </RouterLink> 
-      <RouterLink v-if="!isLoggedIn" :to="{ name: 'Login' }">Login |</RouterLink> 
-      <RouterLink v-if="isLoggedIn" :to="{ name: 'Logout' }">Logout | </RouterLink>
-      <RouterLink v-if="isLoggedIn" :to="{ name: 'Profile' }">Profile |</RouterLink>
-    </div>
+  <div id="app bg-color">
+    <nav id = "nav" class="navbar navbar-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">
+          <img src="@/assets/LOGO_KOR.png" alt="LOGO_KOR" width="168" height="35" class="d-inline-block align-text-top">
+        </a>
+        <div class="justify-content-center fw-bolder">
+          <RouterLink v-if="!isLoggedIn" :to="{ name: 'Signup' }">SIGNUP</RouterLink> |    
+          <RouterLink v-if="!isLoggedIn" :to="{ name: 'Login' }">LOGIN</RouterLink>
+          <RouterLink v-if="isLoggedIn" :to="{ name: 'Logout' }">LOGOUT | </RouterLink>
+          <RouterLink v-if="isLoggedIn" :to="{ name: 'Profile' }">PROFILE |</RouterLink>
+        </div>
+      </div>
+    </nav>
     <RouterView/>
   </div>
 </template>
@@ -20,33 +25,37 @@ export default {
   computed: {
     ...mapGetters(['isLoggedIn', ])
   },
-  methods: {
-    hi() {
-      console.log('hi')
-    }
-  }
 }
 </script>
 
-<style>
+<style scoped>
+#bg-color {
+  background-color: black;
+  text-align: center;
+}
+
+#nav {
+  background-color: black;
+  padding: 5px;
+  color: #b7d1eb;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased; 
+  /* 텍스트가 렌더링될 때 부드럽게 표현 */
+  -moz-osx-font-smoothing: grayscale; 
   text-align: center;
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
-}
-
 #nav a {
-  font-weight: bold;
-  color: #2c3e50;
+  color: #3396f4;
+  text-decoration: none;
+  font-size: 18px;
 }
 
 #nav a.router-link-exact-active {
-  color: #42b983;
+  color: #3396f4;
 }
 </style>

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Review, Comment
 # from django.conf import settings
+from accounts.serializers import UserSerializer
 
 
 # 대댓글 구현
@@ -13,38 +14,40 @@ class RecursiveSerializer(serializers.Serializer):
 
 # 댓글
 class CommentSerializer(serializers.ModelSerializer):
-    replied_by = RecursiveSerializer(many=True, read_only=True, allow_null=True)
+    replied_by = RecursiveSerializer(many=True, read_only=True)
     # reply_to = serializers.SerializerMethodField()
     content = serializers.CharField(max_length=100)
 
     class Meta:
         model = Comment
-        fields = ('content', )
+        fields = ('content', 'replied_by', 'id', 'reply_to', 'user', )
+        read_only_fields = ('replied_by', 'reply_to', 'user', )
 
 
-# 댓글 수정
-# class CommentUpdateSerializer(serializers.ModelSerializer):
-#     comment = CommentSerializer()
-#
-#     class Meta:
-#         model = Comment
-#         fields = ('review', 'user', 'reply_to', 'content', )
+# 댓글 목록 반환
+class CommentSetSerializer(serializers.ModelSerializer):
+    comment_set = CommentSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('comment_set', )
+        read_only_fields = ('comment_set', )
 
 
 # 리뷰 목록
 # 영화에서 보여집니다.
 class ReviewListSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     title = serializers.CharField(max_length=100)
 
     class Meta:
         model = Review
-        fields = ('title',)
+        fields = ('title', 'id',)
+        read_only_fields = ('id', )
 
 
 # 리뷰
 class ReviewSerializer(serializers.ModelSerializer):
-    # num_choices = zip(range(0, 5), range(0, 5))
-
     try:
         from movies.serializers import MovieSerializer
     except ImportError:
@@ -55,13 +58,22 @@ class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.CharField(max_length=100)
     content = serializers.CharField(min_length=1)
     rank = serializers.IntegerField()
-    # rank = serializers.ChoiceField(choices=num_choices)
     comment_set = CommentSerializer(many=True, read_only=True)
+    like_users = UserSerializer(many=True, read_only=True)
 
     class Meta:
         model = Review
         fields = '__all__'
         read_only_fields = ('movie', 'movie_title', 'comment_set', 'user', 'like_users')
+
+
+# 리뷰 좋아요 사용자
+class ReviewLikeUserSerializer(serializers.ModelSerializer):
+    like_users = UserSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Review
+        fields = ('like_users', )
 
 
 
