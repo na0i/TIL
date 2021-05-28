@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth',
     'allauth.account',
+    'allauth.socialaccount',
 
     # django local apps
     'django.contrib.admin',
@@ -148,6 +149,24 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
+
+# rest-auth signup serializer
+# 회원가입 시리얼라이저 커스텀
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'accounts.serializers.CustomRegisterSerializer.CustomRegisterSerializer',
+}
+# 프로필페이지
+REST_AUTH_SERIALIZERS = {
+    # rest-auth/user/
+    'USER_DETAILS_SERIALIZER': 'accounts.serializers.CustomUserDetailSerializer.CustomUserDetailsSerializer',
+}
+
+
+# 시리얼라이저에서 보낸 정보 저장
+ACCOUNT_ADAPTER = 'accounts.adapter.CustomAccountAdapter'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 
 # CORS ALLOW
 CORS_ALLOW_ALL_ORIGINS = True

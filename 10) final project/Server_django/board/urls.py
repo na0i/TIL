@@ -4,14 +4,18 @@ import movies.views
 
 
 urlpatterns = [
-    # 전체 영화 조회 및 생성
+    # 전체 영화 조회 및 생성 -> 여기서 추천 기반 보내고
     path('', movies.views.movie_list_or_create),
-    # 최초 정보 등록
+    # 최초 정보 등록 -> get 으로 목록만 불러오기..
     path('initial_data/', movies.views.fetch_initial_datum),
     # 장르 정보 업데이트
     path('genres/', movies.views.get_genre_data),
-    # 단일 영화 정보, post 요청이면서 superuser 아니면 좋아요..
+    # 좋아요 누른 장르 정보 업데이트
+    # path('genres/user/<int:user_pk>', movies.views.set_like_genres),
+    # 단일 영화 정보
     path('<int:movie_pk>/', movies.views.get_or_create_movie),
+    # 영화 검색
+    path('search/', movies.views.search_movie),
     # 영화 좋아요
     path('<int:movie_pk>/likes/', movies.views.like_movie),
     # 리뷰 생성

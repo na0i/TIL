@@ -10,6 +10,7 @@ import MovieIndexView from "@/views/movies/MovieIndexView";
 import MovieDetail from "@/components/MovieDetail";
 import UpsertReview from "@/components/UpsertReview";
 import ReviewDetail from "@/views/board/ReviewDetail";
+import SearchResults from "@/components/SearchResults";
 
 
 Vue.use(VueRouter)
@@ -25,6 +26,9 @@ const routes = [
   { path: '/', name: 'MovieIndex', component: MovieIndexView},
   // 영화 상세
   { path: '/:movie_id', name: 'MovieDetail', component: MovieDetail},
+  // 영화 검색
+  { path: '/search', name: 'SearchResults', component: SearchResults},
+
   // 리뷰 작성
   { path: '/:movie_id/review/', name: 'UpsertReview', component: UpsertReview},
   { path: '/:movie_id/review/:review_id', name: 'ReviewDetail', component: ReviewDetail},

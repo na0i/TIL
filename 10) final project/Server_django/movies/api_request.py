@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 from django.shortcuts import get_object_or_404
 from .models import Movie
-from .serializers import MovieSerializer
+from movies.serializers.MovieSerializer import MovieSerializer
 
 
 
@@ -42,28 +42,29 @@ def recommend_movies(condition, page=1):
 
 
 
-def get_movie_info(movie_id, condition='', page=1):
+# def get_movie_info(movie_id, condition='', page=1):
+def get_movie_info(movie_id):
     # cast&crew/ 비슷한 영화 추천/ 영화 볼 수 있는 사이트정보
     # similar 의 경우에만 페이지 들어갑니다..!
-    if condition == 'credits':
-        condition = '/' + condition
-    elif condition == 'similar':
-        condition = '/' + condition
-    elif condition == 'watch':
-        condition = '/watch/providers'
+    # if condition == 'credits':
+    #     condition = '/' + condition
+    # elif condition == 'similar':
+    #     condition = '/' + condition
+    # elif condition == 'watch':
+    #     condition = '/watch/providers'
 
-    url = f'https://api.themoviedb.org/3/movie/{movie_id}{condition}?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&page={page}'
+    url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&page=1'
     response = requests.get(url).json()
 
-    if condition == '/watch/providers':
-        response = response['results']['KR']
-    elif condition == 'credits' or condition == 'similar':
-        response = response['results']
+    # if condition == '/watch/providers':
+    #     response = response['results']['KR']
+    # elif condition == 'credits' or condition == 'similar':
+    #     response = response['results']
 
     return response
 
 
-def search(query, page=1, include_adult=True, region='ko', primary_release_year=''):
+def search_tmdb(query, page=1, include_adult=True, region='ko', primary_release_year=''):
     if primary_release_year:
         primary_release_year = f'&year=year&primary_release_year={primary_release_year}'
 
@@ -128,24 +129,26 @@ def get_genre_list(genres):
     return genres
 
 
-
-
-
-
-
-
 def save_movie(data):
+    pprint.pprint(data)
     movie_pk = data['id']
     serializer = MovieSerializer(data=data)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
         movie = get_object_or_404(Movie, pk=movie_pk)
-        # print(movie)
-        genres = data['genre_ids']
-        # genres = get_genre_list(data['genre_ids'])
-        for genre in genres:
-            movie.genres.add(genre)
-            movie.save()
+
+        # 전체 검색을 통해 불러오는 경우
+        if data.get('genre_ids'):
+            genres = data['genre_ids']
+            for genre in genres:
+                movie.genres.add(genre)
+
+        # 영화 상세 검색
+        else:
+            genres = data['genres']
+            for genre in genres:
+                movie.genres.add(genre['id'])
+
         return serializer.data
 
 

@@ -11,7 +11,7 @@ const getters = {
   // 좋아요를 누른 리뷰인지 여부
   isReviewLiked(state, getters, rootState ) {
     if (state.selectedReview.like_users) {
-      return !!state.selectedReview.like_users.filter(user => user.id === rootState.accounts.loginUser.pk).length
+      return !!state.selectedReview.like_users.filter(user => user.id === rootState.accounts.loginUser.id).length
     } else {
       return false
     }

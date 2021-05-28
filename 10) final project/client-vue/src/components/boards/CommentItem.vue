@@ -12,7 +12,7 @@
       <button @click="onClick" class="btn btn-warning"> 댓글 달기 </button>
     </span>
 
-    <div v-if="comment.user === $store.state.accounts.loginUser.pk" class="d-inline-block">
+    <div v-if="comment.user === $store.state.accounts.loginUser.id" class="d-inline-block">
       <button @click="editClicked" class="btn btn-info ms-2"> 댓글 수정 </button>
       <button @click="deleteClicked" class="btn btn-dark ms-2"> 댓글 삭제 </button>
     </div>

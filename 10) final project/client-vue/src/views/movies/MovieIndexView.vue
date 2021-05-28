@@ -8,7 +8,7 @@
       </div>
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="@/assets/interstella.jpg" class="d-block w-100" height="500" alt="interstella_poster">
+          <img src="@/assets/interstella.jpg" class="d-block w-100" height="100%" alt="interstella_poster">
           <div class="carousel-caption d-none d-md-block">
             <div class="mb-5 pb-3">
               <h2 class="fw-bolder">I N T E R S T E L L A R</h2>
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="carousel-item">
-          <img src="@/assets/joker.jpg" class="d-block w-100" height="500" alt="darknight_poster">
+          <img src="@/assets/joker.jpg" class="d-block w-100" height="100%" alt="joker_poster">
           <div class="carousel-caption d-none d-md-block">
             <div class="mb-5 pb-3">
               <h2 class="fw-bolder">J O K E R</h2>
@@ -50,7 +50,7 @@
           </div>
         </div>
         <div class="carousel-item">
-          <img src="@/assets/frozen3.jpg" class="d-block w-100" height="500" alt="lalaland_poster">
+          <img src="@/assets/frozen.jpg" class="d-block w-100" height="100%" alt="frozen2_poster">
           <div class="carousel-caption d-none d-md-block">
             <div class="mb-5 pb-3">
               <h2 class="fw-bolder">F R O Z E N 2</h2>
@@ -82,14 +82,14 @@
       <p id="semititle" class="fw-bolder mt-3">TOP RATED</p>
       <div>
         <li class="row row-cols-6">
-          <MovieListItem v-for="movie in fetchTopRated" :key="`${movie.id}`" :movie="movie"/>
+          <MovieListItem v-for="movie in topRated.slice(0,12)" :key="`${movie.id}`" :movie="movie"/>
         </li>
       </div>
     
       <p id="semititle" class="fw-bolder mt-5">POPULARITY</p>
       <div>
         <li class="row row-cols-6">
-          <MovieListItem v-for="movie in fetchPopularity" :key="`${movie.id}`" :movie="movie"/>
+          <MovieListItem v-for="movie in popular.slice(0,6)" :key="`${movie.id}`" :movie="movie"/>
           <!-- {{ movie.popularity }}  -->
         </li>
       </div>
@@ -97,15 +97,15 @@
       <p id="semititle" class="fw-bolder mt-5">KOREAN MOVIES</p>
       <div>
         <li class="row row-cols-6">
-          <MovieListItem v-for="movie in fetchKorean" :key="`${movie.id}`" :movie="movie"/>
+          <MovieListItem v-for="movie in korean.slice(0,6)" :key="`${movie.id}`" :movie="movie"/>
           <!-- {{ movie.vote_average }} -->
         </li>
       </div>
 
-      <p id="semititle" class="fw-bolder mt-5">1970-80 MOVIES</p>
+      <p id="semititle" class="fw-bolder mt-5">고전 명작</p>
       <div>
         <li class="row row-cols-6">
-          <MovieListItem v-for="movie in fetchClassic" :key="`${movie.id}`" :movie="movie"/>
+          <MovieListItem v-for="movie in classic.slice(0,6)" :key="`${movie.id}`" :movie="movie"/>
           <!-- {{ movie.release_date }} -->
         </li>
       </div>
@@ -114,7 +114,7 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
+import {mapState} from "vuex";
 import MovieListItem from "@/components/MovieListItem";
 
 export default {
@@ -128,18 +128,18 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['fetchMovies']),
     onClick() {
       this.$router.push(`/${this.movieId}`)
     }
   },
-
   computed: {
-    ...mapGetters(['fetchTopRated', 'fetchPopularity', 'fetchKorean', 'fetchClassic'])
+    ...mapState({
+      topRated: state => state.movies.recommendMovie.topRated,
+      popular: state => state.movies.recommendMovie.popular,
+      korean: state => state.movies.recommendMovie.korean,
+      classic: state => state.movies.recommendMovie.classic
+    }),
   },
-  created() {
-    this.fetchMovies()
-  }
 }
 </script>
 
@@ -162,6 +162,16 @@ export default {
 }
 
 /* carousel */
+.carousel-item {
+  height: 100vh;
+  background: no-repeat center center scroll;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+
 .carousel-font {
   font-size: 15px;
   text-align: right;

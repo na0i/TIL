@@ -42,25 +42,37 @@ const actions = {
         commit('SET_TOKEN', res.data.key)
         cookies.set('auth-token', res.data.key, '2d')
         dispatch('getLoginUser')
-        router.push({ name: 'List' })
       })
+      router.push('/')
       .catch(err => {
         console.error(err.response.data)
       })
   },
-  // signup 하면 profile 등록 페이지로 이동 
-  signuppostAuthData({ commit }, { path, data }) {
+
+  // 회원가입시 등록한 장르 저장
+  // async setLikeGenres({dispatch, state, getters}, selected_genres) {
+  //   console.log('hjere')
+  //   console.log(selected_genres)
+  //   await dispatch('getLoginUser')
+  //   axios.post(DRF.URL + DRF.ROUTES.genres + `user/${state.loginUser.id}/`, selected_genres, getters.config)
+  //     .then(() => dispatch('getLoginUser'))
+  //     .catch((err) => console.log(err))
+  //
+  // },
+
+  // signup 하면 profile 등록 페이지로 이동
+  signuppostAuthData({ commit, dispatch }, { path, data }) {
     const FULL_URL_PATH = DRF.URL + path
+    console.log(data)
     axios.post(FULL_URL_PATH, data)
       .then(res => {
         commit('SET_TOKEN', res.data.key)
         cookies.set('auth-token', res.data.key, '2d')
-        // logout 하고 profile 추가 작성하기
-        cookies.remove('auth-token')
-        commit('SET_TOKEN', null)
-        router.push({ name: 'Profile' })
+        dispatch('getLoginUser')
       })
+      router.push('/')
       .catch(err => {
+        console.log(err.response.data)
         console.error(err.response.data)
       })
   },
@@ -68,6 +80,7 @@ const actions = {
   signup({ dispatch }, signupData) {
     const info = {
       data: signupData,
+      // selected_genres: likeGenres,
       path: DRF.ROUTES.signup
     }
     dispatch('signuppostAuthData', info)
@@ -89,7 +102,7 @@ const actions = {
         cookies.remove('login-user')
         commit('SET_TOKEN', null)  // state 에서도 삭제
         commit('SET_USER', null)
-        router.push({ name: 'Profile' }) 
+        router.go(-1)
       })
       .catch(err => console.error(err.response.data))
   },

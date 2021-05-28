@@ -5,7 +5,10 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Review, Comment
-from .serializers import ReviewSerializer, CommentSerializer, ReviewLikeUserSerializer, CommentSetSerializer
+from board.serializers.ReviewSerializer import ReviewSerializer
+from board.serializers.CommentSerializer import CommentSerializer
+from board.serializers.ReviewLikeUserSerializer import ReviewLikeUserSerializer
+from board.serializers.CommentSetSerializer import CommentSetSerializer
 
 from movies.models import Movie
 
@@ -85,9 +88,6 @@ def update_or_delete_or_recreate_comment(request, movie_pk, review_pk, comment_p
 
     # 댓글 삭제
     if request.method == 'DELETE':
-        print('-----------------')
-        print(request.data)
-        print(comment.user)
         if str(comment.user) == request.data['username']:
             comment.delete()
             comment_set_serializer = CommentSetSerializer(review)
