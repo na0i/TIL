@@ -7,8 +7,8 @@ import LogoutView from '@/views/accounts/LogoutView.vue'
 import ProfileView from '@/views/accounts/ProfileView.vue'
 
 import MovieIndexView from "@/views/movies/MovieIndexView";
-import MovieDetail from "@/components/MovieDetail";
-import UpsertReview from "@/components/UpsertReview";
+import MovieDetail from "@/components/movies/MovieDetail";
+import UpsertReview from "@/components/boards/UpsertReview";
 import ReviewDetail from "@/views/board/ReviewDetail";
 import SearchResults from "@/components/SearchResults";
 

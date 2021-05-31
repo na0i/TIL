@@ -105,7 +105,7 @@
       <p id="semititle" class="fw-bolder mt-5">고전 명작</p>
       <div>
         <li class="row row-cols-6">
-          <MovieListItem v-for="movie in classic.slice(0,6)" :key="`${movie.id}`" :movie="movie"/>
+          <MovieListItem v-for="movie in classic.slice(10,16)" :key="`${movie.id}`" :movie="movie"/>
           <!-- {{ movie.release_date }} -->
         </li>
       </div>
@@ -115,7 +115,7 @@
 
 <script>
 import {mapState} from "vuex";
-import MovieListItem from "@/components/MovieListItem";
+import MovieListItem from "@/components/movies/MovieListItem";
 
 export default {
   name: "MovieIndex",

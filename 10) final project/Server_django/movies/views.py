@@ -17,6 +17,7 @@ from movies.serializers.GenreSerializer import GenreSerializer
 from movies.serializers.MovieSerializer import MovieSerializer
 from movies.serializers.MovieListSerializer import MovieListSerializer
 from movies.serializers.MovieLikeUserSerializer import MovieLikeUserSerializer
+from movies.serializers.MovieForUserSerializer import MovieForUserSerializer
 
 from accounts.serializers.CustomUserDetailSerializer import CustomUserDetailsSerializer
 
@@ -218,6 +219,40 @@ def search_movie(request):
 
 
 
+# tmdb 크롤링
+@api_view(['GET'])
+def get_provider_url(request, movie_pk):
+    # <QueryDict: {'method': ['flatrate'], 'provider': ['wavve']}>
+    # print(request.GET['method']) flatrate
+    method = request.GET['method']
+    provider = request.GET['provider']
+
+    link = get_providers(movie_pk, method, provider)
+
+    # if request.GET.method == 'flatrate':
+    # elif request.GET.method == 'buy':
+    #     link = get_providers(movie_pk, method, provider)
+    # elif request.GET.method == 'rent':
+    #     pass
+
+    data = {
+        'link': link
+    }
+    return Response(data)
+
+
+# 장르 정보 가지고 추천
+@api_view(['GET'])
+def recommend_by_genre(request, genre_pk):
+    genre = get_object_or_404(Genre, pk=genre_pk)
+
+    movies = Movie.objects.all().filter(genres__movie__genres=genre)[:6]
+    print('here')
+
+    serializer = MovieSerializer(movies, many=True)
+    print('check')
+
+    return Response(serializer.data)
 
 
 

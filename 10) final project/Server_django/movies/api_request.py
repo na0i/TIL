@@ -44,22 +44,9 @@ def recommend_movies(condition, page=1):
 
 # def get_movie_info(movie_id, condition='', page=1):
 def get_movie_info(movie_id):
-    # cast&crew/ 비슷한 영화 추천/ 영화 볼 수 있는 사이트정보
-    # similar 의 경우에만 페이지 들어갑니다..!
-    # if condition == 'credits':
-    #     condition = '/' + condition
-    # elif condition == 'similar':
-    #     condition = '/' + condition
-    # elif condition == 'watch':
-    #     condition = '/watch/providers'
 
     url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&page=1'
     response = requests.get(url).json()
-
-    # if condition == '/watch/providers':
-    #     response = response['results']['KR']
-    # elif condition == 'credits' or condition == 'similar':
-    #     response = response['results']
 
     return response
 
@@ -77,49 +64,47 @@ def search_tmdb(query, page=1, include_adult=True, region='ko', primary_release_
     return response
 
 
-def get_providers(movie_id):
+def get_providers(movie_id, method, provider):
     url = f'https://www.themoviedb.org/movie/{movie_id}/watch?language=ko'
     # https: // www.themoviedb.org / movie / 496243 / watch?language = ko
-
-    isprovidedby = get_movie_info(movie_id, 'provider')
 
     headers = {'User-Agent': 'Mozilla/5.0'}
     response = requests.get(url, headers=headers)
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    streaming = ''
-    buy = ''
-    rent = ''
+    methods = ['flatrate', 'rent', 'buy']
 
-    if isprovidedby['flatrate']:
-        datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(4) > div > ul > li.ott_filter_best_price a')
-        streaming = []
-        for data in datum:
-            each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
-            streaming.append(each)
+    for i in range(3):
+        if method == methods[i]:
+            datum = soup.select(f'#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child({i+4}) > div > ul > li.ott_filter_best_price a')
+            for data in datum:
+                if provider in data.attrs["title"]:
+                    link = data.attrs["href"]
+                    break
+    #
+    # if method == 'flatrate':
+    #     datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(4) > div > ul > li.ott_filter_best_price a')
+    #     streaming = []
+    #     for data in datum:
+    #         each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
+    #         streaming.append(each)
+    #
+    # elif method == 'buy':
+    #     datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(6) > div > ul > li.ott_filter_best_price a')
+    #     buy = []
+    #     for data in datum:
+    #         each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
+    #         buy.append(each)
+    #
+    # elif method == 'rent':
+    #     datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(5) > div > ul > li.ott_filter_best_price a')
+    #     rent = []
+    #     for data in datum:
+    #         each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
+    #         rent.append(each)
 
-    if isprovidedby['buy']:
-        datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(6) > div > ul > li.ott_filter_best_price a')
-        buy = []
-        for data in datum:
-            each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
-            buy.append(each)
-
-    if isprovidedby['rent']:
-        datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(5) > div > ul > li.ott_filter_best_price a')
-        rent = []
-        for data in datum:
-            each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
-            rent.append(each)
-
-    providers = {
-        'streaming': streaming,
-        'buy': buy,
-        'rent': rent,
-    }
-
-    return providers
+    return link
 
 
 def get_genre_list(genres):

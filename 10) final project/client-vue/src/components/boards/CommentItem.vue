@@ -1,13 +1,14 @@
 <template>
-  <div>
+  <div class="container">
     <div v-if="isEdit">
       <input v-model="comment.content" @keyup.enter="[updateComment(commentData), updateRequested()]">
       <button @click="updateComment(commentData), updateRequested()"> 수정 완료 </button>
     </div>
-    <div v-else>
-      {{ comment.content }}
+    <div v-else class="d-inline-block my-2">
+      <h3>{{ comment.content }}</h3>
     </div>
 
+  <div class="d-inline-block ms-5">
     <span>
       <button @click="onClick" class="btn btn-warning"> 댓글 달기 </button>
     </span>
@@ -16,6 +17,7 @@
       <button @click="editClicked" class="btn btn-info ms-2"> 댓글 수정 </button>
       <button @click="deleteClicked" class="btn btn-dark ms-2"> 댓글 삭제 </button>
     </div>
+  </div>
 
     <div v-if="isClicked">
       <input v-model="commentData.content" @keyup.enter="[createNestedComment(commentData), onSubmit()]">
