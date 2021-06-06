@@ -1,51 +1,24 @@
 <template>
   <div id="app">
-    <nav class="nav navbar navbar-expand-lg container-fluid d-flex justify-content-between align-items-end m-2">
-      <!--<div class="container-fluid d-flex justify-content-between align-items-end m-2">-->
-        <div class="d-inline-flex align-items-end">
-
-        <a class="navbar-brand ms-2 d-block" href="/">
-          <img src="@/assets/LOGO_KOR.png" alt="LOGO_KOR" width="168" height="35" class="ms-1 align-self-center">
-        </a>
-
-          <div class="d-inline-block mx-5">
-            <span v-if="!isLoggedIn">
-              <RouterLink :to="{ name: 'Signup' }">SIGNUP</RouterLink>
-            </span>
-            <span v-if="!isLoggedIn" class="ms-5">
-              <RouterLink :to="{ name: 'Login' }">LOGIN</RouterLink>
-            </span>
-            <span v-if="isLoggedIn">
-              <RouterLink :to="{ name: 'Profile' }">PROFILE </RouterLink>
-            </span>
-            <span v-if="isLoggedIn" class="ms-5">
-              <RouterLink :to="{ name: 'Logout' }">LOGOUT </RouterLink>
-            </span>
-          </div>
-        </div>
-        <div class="w-50">
-          <SearchBar/>
-        </div>
-      <!--</div>-->
-    </nav>
-    <div id="wrapper">
+    <NavBar/>
+    <div>
       <RouterView/>
     </div>
   </div>
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
-import SearchBar from "@/components/SearchBar"
+import {mapActions} from 'vuex'
+import NavBar from "@/views/NavBar";
 
 export default {
   name: 'App',
   components: {
-    SearchBar
+    NavBar,
   },
   computed: {
-    ...mapGetters(['isLoggedIn', ]),
-    ...mapActions(['fetchInitialDatum'])
+    ...mapActions(['fetchInitialDatum']),
+
   },
   created() {
     this.fetchInitialDatum

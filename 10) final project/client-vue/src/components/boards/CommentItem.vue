@@ -1,13 +1,13 @@
 <template>
-  <div class="container">
+  <div>
     <div v-if="isLoggedIn">
 
       <div v-if="isEdit">
         <input v-model="comment.content" @keyup.enter="[updateComment(commentData), updateRequested()]">
         <button @click="[updateComment(commentData), updateRequested()]"> 수정 완료 </button>
       </div>
-      <div v-else class="d-inline-block my-2">
-        <h3>{{ comment.content }}</h3>
+      <div v-else class="d-inline-block">
+        <p> {{ comment.content }}</p>
       </div>
 
     <div class="d-inline-block">
@@ -27,11 +27,11 @@
       </div>
 
 
-      <ul v-if="!!comment.replied_by.length" class="ms-5">
-        <li v-for="(comment, idx) in comment.replied_by" :key="idx">
+      <div v-if="!!comment.replied_by.length" class="ms-5">
+        <span v-for="(comment, idx) in comment.replied_by" :key="idx" class="d-inline-block">
           <CommentItem :comment="comment"/>
-        </li>
-      </ul>
+        </span>
+      </div>
 
     </div>
   </div>

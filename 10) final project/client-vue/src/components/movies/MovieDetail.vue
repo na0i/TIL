@@ -9,15 +9,15 @@
           <h1 class="bold description">{{ selectedMovie.title }}</h1>
           <span class="content pt-1">{{ selectedMovie.original_title }}</span>
           <hr>
-          <div class="sm-content">
+          <div>
             <img src="@/assets/LOGO_VER1.png" width="20px" height="20px" class="m-1">
             <span class="content pt-1">평점 : {{ selectedMovie.vote_average }}</span>
           </div>
-          <div class="sm-content content">
+          <div class="content">
             <img src="@/assets/LOGO_VER1.png" width="20px" height="20px" class="m-1">장르 : 
             <span class="content pt-1" v-for="(genre, idx) in selectedMovie.genres" :key="idx">{{genre.name}}  </span>
           </div>
-          <div class="sm-content">
+          <div>
             <img src="@/assets/LOGO_VER1.png" width="20px" height="20px" class="m-1">
             <span class="content pt-1 pe-5">개봉일 : {{ selectedMovie.release_date }}</span>
           </div>
@@ -67,12 +67,12 @@
             <div v-if="isMovieLiked" @click="likeMovie(selectedMovie.id)" >
               <!-- <img src="@/assets/LOGO_black.png" width="25vh" class="ms-2 me-2 dislikebtn"> -->
               이 영화 별로에요
-              <img src="@/assets/LOGO_black.png" width="25vh" class="ms-2 me-5 sm-content dislikebtn">
+              <img src="@/assets/LOGO_black.png" width="25vh" class="ms-2 me-5 sdislikebtn">
             </div>
             <div v-else @click="likeMovie(selectedMovie.id)" >
               <!-- <img src="@/assets/LOGO_red.png" width="25vh" class="ms-2 me-2 likebtn"> -->
               이 영화 좋아요
-              <img src="@/assets/LOGO_red.png" width="25vh" class="ms-2 me-5 sm-content likebtn">
+              <img src="@/assets/LOGO_red.png" width="25vh" class="ms-2 me-5 likebtn">
             </div>
             <br>
             <div class="review-router mt-1">
@@ -89,10 +89,10 @@
       <hr>
       <!-- 리뷰 보여주기 -->
       <ol v-if="reviews.length" class="review-list">
-        <div class="d-flex align-items-center">
-          <img src="@/assets/LOGO_VER1.png" width="25vh" class="mb-1"><h3 class="d-inline-block"> 쌓인 리뷰 </h3>
+        <div class="align-items-center">
+          <img src="@/assets/LOGO_VER1.png" width="25vh" class="mb-1 me-1"><h4 class="d-inline-block"> 쌓인 리뷰 </h4>
         </div>
-        <li v-for="(review, idx) in reviews" :key="idx" @click="fetchReview(selectedMovie.id, review.id)" class="h3 mt-3 ms-3">
+        <li v-for="(review, idx) in reviews" :key="idx" @click="fetchReview(selectedMovie.id, review.id)" class="h5 mt-3 ms-3">
           <RouterLink :to="`/${selectedMovie.id}/review/${review.id}/`">
             {{ review.title }}
           </RouterLink>
@@ -184,12 +184,6 @@ export default {
   z-index: 100;
 }
 
-.sm-content {
-  vertical-align: middle;
-  font-weight: 100;
-  font-size: 15px
-}
-
 .review-alert {
   font-weight: 100;
   font-size: 15px;
@@ -198,11 +192,13 @@ export default {
 .likebtn {
   position: relative;
   z-index: 100;
+  cursor: pointer;
 }
 
 .dislikebtn {
   position: relative;
   z-index: 100;
+  cursor: pointer; 
 }
 
 .review-router {

@@ -7,7 +7,6 @@ import router from "@/router";
 
 const state = {
   genreList: [],
-  // movies: [],
   movieList: [],
   recommendMovie: {
     topRated: [],
@@ -23,6 +22,7 @@ const state = {
         flatrate: [],
         rent: [],
       },
+
   // 링크 연결
   selectedProviderLink : '',
 
@@ -93,6 +93,8 @@ const mutations = {
       }
     }
   },
+
+  // 사이트 링크
   SET_SELECTED_PROVIDER_LINK (state, link) {
     state.selectedProviderLink = link
   },
@@ -140,7 +142,7 @@ const actions = {
   },
 
 
-  // 저장된 영화 정보 -> 리뷰 및 좋아요까지
+  // 저장된 영화 정보 -> 기존의 리뷰 및 좋아요까지
   fetchMovieDetail({commit}, movieId) {
     axios.get(DRF.URL + `${movieId}/`)
       .then((res) => commit('SET_MOVIE_DETAIL', res.data))
@@ -164,8 +166,6 @@ const actions = {
   },
 
   // 영화 검색
-  // ㅎ... url에 담아 보내기 싫어서 그냥 post...
-  // 시간 나면 고치겠슴미다..ㅠㅠ
   searchMovie({commit}, query) {
     // tmdb로 바로 요청 보내기
     const search_url = `https://api.themoviedb.org/3/search/movie?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&query=${query}&page=1&include_adult=False`
@@ -184,8 +184,13 @@ const actions = {
       }
     })
       .then((res) => {
+        // 에러때문에 아래 문장 잠시 주석 해제할게요
         commit('SET_SELECTED_PROVIDER_LINK', res.data.link)
-        window.open(res.data.link, '_blank')
+        if (res.data.link === '') {
+          alert('앗! 죄송합니다. 해당 사이트로 연결이 불가합니다.')
+        } else {
+          window.open(res.data.link, '_blank')
+        }
       })
       .catch((err) => console.log(err))
   }

@@ -111,6 +111,7 @@
           <!-- {{ movie.release_date }} -->
         </li>
       </div>
+      <br><br>
     </div>
   </div>
 </template>

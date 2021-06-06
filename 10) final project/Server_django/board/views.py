@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -43,8 +43,6 @@ def read_or_update_or_delete_review(request, movie_pk, review_pk):
 
     # 리뷰 삭제
     elif request.method == 'DELETE':
-        # print(review.user, type(review.user), type(str(review.user)))
-        # print(request.data['username'], type(request.data['username']))
         # 작성자가 삭제..
         if str(review.user) == request.data['username']:
             review.delete()

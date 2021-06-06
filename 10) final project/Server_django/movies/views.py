@@ -1,25 +1,16 @@
-from django.shortcuts import get_object_or_404, HttpResponseRedirect
-from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from django.contrib.auth import get_user_model
-
-import pprint
-import requests
-
 from .models import Movie, Genre
-from .api_request import get_genre, save_movie, recommend_movies, get_movie_info, search_tmdb, get_providers, get_genre_list
+from .api_request import get_genre, save_movie, recommend_movies, get_movie_info, search_tmdb, get_providers
 from movies.serializers.GenreSerializer import GenreSerializer
 from movies.serializers.MovieSerializer import MovieSerializer
 from movies.serializers.MovieListSerializer import MovieListSerializer
 from movies.serializers.MovieLikeUserSerializer import MovieLikeUserSerializer
-from movies.serializers.MovieForUserSerializer import MovieForUserSerializer
-
-from accounts.serializers.CustomUserDetailSerializer import CustomUserDetailsSerializer
 
 
 @api_view(['POST', 'GET'])
@@ -56,12 +47,9 @@ def get_genre_data(request):
 @api_view(['POST', 'GET'])
 def fetch_initial_datum(request):
 
-    # 관리자의 경우에만 최초 데이터 불러오기 가능
-    # if request.user.is_superuser:
-
     # DB에 자료 저장
     if request.method == 'POST':
-        conditions = ['popular', 'top_rated']  # top_rated
+        conditions = ['popular', 'top_rated']
 
         results = {
             'success': 0,
@@ -73,8 +61,8 @@ def fetch_initial_datum(request):
             ]
         }
 
-        # 인기순 100/
-        # 평점 높은 순 100/
+        # 인기순 200/
+        # 평점 높은 순 200/
         for condition in conditions:
             for i in range(1, 201):
                 datum = recommend_movies(condition, page=i)
@@ -99,12 +87,16 @@ def fetch_initial_datum(request):
     elif request.method == 'GET':
         movies = Movie.objects.all()
 
+        # 평점 높은 순
         top_rated = movies.filter(vote_count__gt=300).order_by('-vote_average')[:24]
         tr_serializer = MovieSerializer(top_rated, many=True)
+        # 인기순
         popular = movies.order_by('-popularity')[:24]
         pop_serializer = MovieSerializer(popular, many=True)
+        # 한국영화 평점 높은 순
         ko_top_rated = movies.filter(original_language='ko').order_by('-vote_average')[:24]
         ko_serializer = MovieSerializer(ko_top_rated, many=True)
+        # 고전영화 평점 높은 순
         classic = movies.filter(release_date__range=["1970-01-01", "1998-01-01"]).order_by('-vote_average')[:24]
         classic_serializer = MovieSerializer(classic, many=True)
 
@@ -129,8 +121,6 @@ def movie_list_or_create(request):
         # recommend_movies(condition, page=1)
         인기 영화 = popular
         top_rated = top_rated
-
-        // 페이지 한개 밖에 없는 듯 //
         개봉예정 = upcoming
         상영중 = now_playing
         '''
@@ -153,8 +143,6 @@ def movie_list_or_create(request):
             if not Movie.objects.all().filter(pk=request.data['id']):
                 save_movie(request.data)
 
-
-
         return Response(data=results)
 
     # 전체 영화 리스트
@@ -165,10 +153,6 @@ def movie_list_or_create(request):
 
 
 # 단일 영화 상세 페이지
-'''
-이거 없다면 추가하는 건 일단 다른 함수든 연결해야 할 것 같습니다. 
-애초에 영화 데이터 자체를 어드민만 추가할 수 있는게 명세라서 좀 더 고민이 필요해 보입니다. 
-'''
 @api_view(['GET', 'POST'])
 def get_or_create_movie(request, movie_pk):
     # DB에 없다면,
@@ -218,22 +202,13 @@ def search_movie(request):
         return search_tmdb(request.data)
 
 
-
 # tmdb 크롤링
 @api_view(['GET'])
 def get_provider_url(request, movie_pk):
-    # <QueryDict: {'method': ['flatrate'], 'provider': ['wavve']}>
-    # print(request.GET['method']) flatrate
     method = request.GET['method']
     provider = request.GET['provider']
 
     link = get_providers(movie_pk, method, provider)
-
-    # if request.GET.method == 'flatrate':
-    # elif request.GET.method == 'buy':
-    #     link = get_providers(movie_pk, method, provider)
-    # elif request.GET.method == 'rent':
-    #     pass
 
     data = {
         'link': link
@@ -242,6 +217,7 @@ def get_provider_url(request, movie_pk):
 
 
 # 장르 정보 가지고 추천
+# 개인 프로필페이지
 @api_view(['GET'])
 def recommend_by_genre(request, genre_pk):
     genre = get_object_or_404(Genre, pk=genre_pk)

@@ -1,8 +1,6 @@
-import pprint
+from bs4 import BeautifulSoup
 import requests
 import re
-
-from bs4 import BeautifulSoup
 
 from django.shortcuts import get_object_or_404
 from .models import Movie
@@ -22,27 +20,23 @@ def get_genre():
     return response
 
 
+# 영화 추천
 def recommend_movies(condition, page=1):
     '''
     인기 영화 = popular
     top_rated = top_rated
-
-    // 페이지 한개 밖에 없는 듯 //
     개봉예정 = upcoming
     상영중 = now_playing
     '''
 
     recommend_URL = f'https://api.themoviedb.org/3/movie/{condition}?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&page={page}&region=KR'
     response = requests.get(recommend_URL).json()
-    # print(response)
-    # print(recommend_URL)
     response = response['results']
 
     return response
 
 
-
-# def get_movie_info(movie_id, condition='', page=1):
+# 개별 영화 상세 정보
 def get_movie_info(movie_id):
 
     url = f'https://api.themoviedb.org/3/movie/{movie_id}?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&page=1'
@@ -51,6 +45,7 @@ def get_movie_info(movie_id):
     return response
 
 
+# tmdb 검색
 def search_tmdb(query, page=1, include_adult=True, region='ko', primary_release_year=''):
     if primary_release_year:
         primary_release_year = f'&year=year&primary_release_year={primary_release_year}'
@@ -62,9 +57,9 @@ def search_tmdb(query, page=1, include_adult=True, region='ko', primary_release_
     return response
 
 
+# 시청 사이트 연결
 def get_providers(movie_id, method, provider):
     url = f'https://www.themoviedb.org/movie/{movie_id}/watch?language=ko'
-    # https: // www.themoviedb.org / movie / 496243 / watch?language = ko
 
     headers = {'User-Agent': 'Mozilla/5.0'}
     response = requests.get(url, headers=headers)
@@ -73,6 +68,7 @@ def get_providers(movie_id, method, provider):
 
     methods = ['flatrate', 'rent', 'buy']
 
+    link = ''
     for i in range(3):
         if method == methods[i]:
             datum = soup.select(f'#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child({i+4}) > div > ul > li.ott_filter_best_price a')
@@ -80,31 +76,12 @@ def get_providers(movie_id, method, provider):
                 if provider in data.attrs["title"]:
                     link = data.attrs["href"]
                     break
-    #
-    # if method == 'flatrate':
-    #     datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(4) > div > ul > li.ott_filter_best_price a')
-    #     streaming = []
-    #     for data in datum:
-    #         each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
-    #         streaming.append(each)
-    #
-    # elif method == 'buy':
-    #     datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(6) > div > ul > li.ott_filter_best_price a')
-    #     buy = []
-    #     for data in datum:
-    #         each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
-    #         buy.append(each)
-    #
-    # elif method == 'rent':
-    #     datum = soup.select('#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child(5) > div > ul > li.ott_filter_best_price a')
-    #     rent = []
-    #     for data in datum:
-    #         each = {'link': data.attrs["href"], 'site': data.attrs["title"].split('on ')[1]}
-    #         rent.append(each)
 
     return link
 
 
+# 장르 리스트 불러오기
+# 사용 X
 def get_genre_list(genres):
     genre = re.compile(r'\d+')
     genres = genre.findall(genres)
@@ -112,6 +89,7 @@ def get_genre_list(genres):
     return genres
 
 
+# db에 없는 영화 저장
 def save_movie(data):
     movie_pk = data['id']
     serializer = MovieSerializer(data=data)
@@ -135,6 +113,7 @@ def save_movie(data):
 
 
 ### fetch initial datum
+# 최초로 불러오는 영화 정보
 def fetch_datum():
     # 평점 높은 순으로 50/
     # 최신영화 50/

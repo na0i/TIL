@@ -2,53 +2,59 @@
   <div>
     <div class="upsertreview">
 
-    
-      <div class="d-flex justify-content-between align-items-stretch" style="margin-top: 20vh">
-        <div>
-          <h5 v-if="isUpdate" class="review">리뷰 수정</h5>
-          <h5 v-else class="review"> 리뷰 작성</h5>
-          <h4 class="review-title">{{ selectedMovie.title }} </h4>
-        </div>
-      </div>
-
-      <div class="form_group field">
-        <input type="text" v-model="reviewData.title" class="form_field" placeholder="Review Title" name="name" id='name' required />
-        <label for="name" class="form_label">리뷰 제목을 입력하세요. </label>
-      </div>
-
-      <div class="form_group field">
-        <textarea v-model="reviewData.content" id="content" rows="5" placeholder="Review Content" content="content" class="form_field" required></textarea>
-        <label for="content" class="form_label">리뷰 내용을 입력하세요. </label>
-      </div>
-
-      <div class="container d-flex justify-content-center mt-3">
-
-
-          <div class="mt-5">
-            <span v-if="isUpdate">
-              <button @click="updateReview(reviewData)" class="button mt-3"> 수정 완료 </button>
-            </span>
-            <span v-else>
-              <button @click="createReview(reviewData)" class="button mt-3"> 작성 완료 </button>
-            </span>
+      <div class="container row">
+          <div class="col-6 d-flex justify-content-center">
+            <img src="@/assets/LOGO_VER2.png" width="50%" style="margin-top: 20vh">
           </div>
 
-
-          <div class="row">
-            <div class="col-3">
-              <div class="optionbox">
-                <select id="rank" v-model="reviewData.rank">
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                </select>
+          <div class="col-6">
+              <div style="margin-top: 20vh">
+                <div>
+                  <span class="review-title">{{ selectedMovie.title }} </span>
+                  <span v-if="isUpdate" class="review">에 대한 리뷰 수정하기</span>
+                  <span v-else class="review">에 대한 리뷰 작성하기</span>
+                </div>
               </div>
-            </div>
-          </div>
 
+              <div class="form_group field">
+                <input type="text" v-model="reviewData.title" class="form_field" placeholder="Review Title" name="name" id='name' required />
+                <label for="name" class="form_label">리뷰 제목을 입력하세요. </label>
+              </div>
+
+              <div class="form_group field">
+                <textarea v-model="reviewData.content" id="content" rows="5" placeholder="Review Content" content="content" class="form_field" required></textarea>
+                <label for="content" class="form_label">리뷰 내용을 입력하세요. </label>
+              </div>
+
+              <div class="mt-3 underrow">
+                <!-- 평점 check box -->
+                <span class="col-3 optionbox">
+                <span>별점 :  </span>
+                <select id="rank" v-model="reviewData.rank">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </span>
+                <!-- 평점 check box 끝 -->
+
+                <!-- 제출 button -->
+                <div>
+                  <span v-if="isUpdate">
+                    <button @click="updateReview(reviewData)" class="button"> 수정 완료 </button>
+                  </span>
+                  <span v-else>
+                    <button @click="createReview(reviewData)" class="button"> 작성 완료 </button>
+                  </span>
+                </div>
+                <!-- 제출 button 끝-->
+              </div>
+          </div>
+      
       </div>
+
     </div>
   </div>
 </template>
@@ -94,8 +100,8 @@ export default {
 .upsertreview {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
   min-height: 60vh;
 
   font-family: 'Noto Sans KR', sans-serif;
@@ -108,60 +114,15 @@ export default {
 
 .review-title {
   color: #3396f4;
+  font-size: 30px;
 }
-
-/* select button 시작 */
-.box {
-  position: relative;
-  transform: translate(-50%, -50%);
-}
-
-.box select {
-  background-color: #0563af;
-  color: white;
-  padding: 12px;
-  width: 250px;
-  border: none;
-  font-size: 20px;
-  box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-  -webkit-appearance: button;
-  appearance: button;
-  outline: none;
-  margin: auto;
-}
-
-.box::before {
-  content: "\f13a";
-  font-family: FontAwesome;
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 20%;
-  height: 100%;
-  text-align: center;
-  font-size: 28px;
-  line-height: 45px;
-  color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(255, 255, 255, 0.1);
-  pointer-events: none;
-}
-
-.box:hover::before {
-  color: rgba(255, 255, 255, 0.6);
-  background-color: rgba(255, 255, 255, 0.2);
-}
-
-.box select option {
-  /*padding: 30px;*/
-}
-/* select button 끝 */
 
 /* input form css 시작 */
 .form_group {
   position: relative;
   padding: 15px 0 0;
   margin-top: 10px;
-  width: 50%;
+  width: 100%;
 }
 
 .form_field {
@@ -218,29 +179,30 @@ export default {
 
 /* input form css 끝 */
 
+.underrow {
+  display: flex;
+  justify-content: space-between;
+}
 
 /*셀렉트박스 */
 .optionbox {
-    position: absolute;
-    /*top: 70%;*/
-    right: 12%;
-    transform: translate(-50%, -50%)
+  font-size: 17px;
 }
 
 .optionbox select {
     background: #0563af;
     color: #fff;
     padding: 10px;
-    width: 200px;
+    width: 80px;
     height: 50px;
     border: none;
-    font-size: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
     /*box-shadow: 0 5px 48px rgba(5, 99, 175, 0.89);*/
     -webkit-appearance: button;
     outline: none
 }
 
-.optionbox:before {
+/* .optionbox:before {
     content: '\f358';
     font-family: "Font Awesome 5 free";
     position: absolute;
@@ -254,23 +216,23 @@ export default {
     color: #fff;
     font-size: 30px;
     pointer-events: none
-}
+} */
 
 .button {
-    position: absolute;
+    /* position: absolute; */
     /*top: 70%;*/
-    right: 12%;
-    transform: translate(-50%, -50%)
+    /*right: 12%;
+    transform: translate(-50%, -50%);*/
 }
 
 .button {
     background: #0563af;
     color: #fff;
-    padding: 10px;
     width: 200px;
     height: 50px;
     border: none;
-    font-size: 20px;
+    font-size: 17px;
+    font-family: 'Noto Sans KR', sans-serif;
     /*box-shadow: 0 5px 48px rgba(5, 99, 175, 0.89);*/
     -webkit-appearance: button;
     outline: none

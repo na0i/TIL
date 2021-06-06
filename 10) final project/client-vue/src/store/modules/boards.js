@@ -56,7 +56,6 @@ const actions = {
     // <int:movie_pk>/review/
     axios.post(DRF.URL + `${reviewData.movie}/review/`, reviewData, getters.config)
       .then((res) => {commit('SET_REVIEW', res.data)})
-        // router.push({path: `/${res.data.movie.id}/review/${res.data.id}`})
       .then(() => router.push({ name: 'ReviewDetail', params: {movie_id: reviewData.movie, review_id: this.state.boards.selectedReview.id}}))
       .catch(err => console.log(err))
   },

@@ -9,11 +9,12 @@ const state = {
   authToken: cookies.get('auth-token'),
   loginUser: cookies.get('login-user'),
   recByUser: [],
+
 }
 
 const getters = {
   isLoggedIn: state => !!state.authToken,
-  config: state => ({ headers: { Authorization: `Token ${state.authToken}` } })
+  config: state => ({ headers: { Authorization: `Token ${state.authToken}` }}),
 }
 
 const mutations = {
@@ -25,7 +26,7 @@ const mutations = {
   },
   SET_REC_BY_USER(state, data) {
     state.recByUser = data
-  }
+  },
 }
 
 const actions = {
@@ -66,13 +67,9 @@ const actions = {
       .then(() => {
         router.go(-1)
       })
-      .catch(err => {
-        console.error(err.response.data)
-      })
+      .catch(() => alert('일치하는 아이디 혹은 비밀번호가 없습니다.'))
   },
 
-
-  // signup 하면 profile 등록 페이지로 이동
   signuppostAuthData({ commit, dispatch }, { path, data }) {
     const FULL_URL_PATH = DRF.URL + path
     axios.post(FULL_URL_PATH, data)
@@ -85,7 +82,13 @@ const actions = {
         router.go(-1)
       })
       .catch(err => {
-        console.log(err.response.data)
+        // username 오류
+        if (err.response.data.username) {
+
+
+          alert(err.response.data.username)
+        }
+        alert(err.response.data[0])
         console.error(err.response.data)
       })
   },
@@ -93,7 +96,6 @@ const actions = {
   signup({ dispatch }, signupData) {
     const info = {
       data: signupData,
-      // selected_genres: likeGenres,
       path: DRF.ROUTES.signup
     }
     dispatch('signuppostAuthData', info)
@@ -119,6 +121,7 @@ const actions = {
       .then(() => router.go(-1))
       .catch(err => console.error(err.response.data))
   },
+
 }
 
 export default {

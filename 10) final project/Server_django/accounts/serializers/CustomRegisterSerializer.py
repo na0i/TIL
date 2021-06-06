@@ -1,8 +1,8 @@
-from django.db import models
-from django.db.models import fields
-
-from allauth.account.adapter import get_adapter
-from allauth.account.utils import setup_user_email
+# from django.db import models
+# from django.db.models import fields
+#
+# from allauth.account.adapter import get_adapter
+# from allauth.account.utils import setup_user_email
 
 from rest_framework import serializers
 from rest_auth.registration.serializers import RegisterSerializer

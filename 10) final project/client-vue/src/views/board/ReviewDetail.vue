@@ -8,19 +8,19 @@
         <!--영화제목-->
         <div @click="setMovieDetail(review.movie.id)" class="h3 d-inline-block">
           <RouterLink :to="`/${review.movie.id}`" class="text-decoration-none">
-            <h2>{{ review.movie.title }}</h2>
+            <h2 class="review-title">{{ review.movie.title }}</h2>
           </RouterLink>
         </div>
 
         <!--리뷰상세-->
         <div class="about-review">
-          <span class="reviewtitle fw-bold">리뷰 제목 : </span>
+          <span class="review-semititle fw-bolder">리뷰 제목 : </span>
           <span class="reviewdetail">{{ review.title }}</span>
           <br>
-          <span class="reviewtitle fw-bold">평가 : </span>
+          <span class="review-semititle fw-bolder">평가 : </span>
           <span class="reviewdetail">{{ review.rank }}</span>
           <br>
-          <p class="reviewtitle fw-bold mt-1">리뷰 내용</p>
+          <p class="review-semititle fw-bolder mt-1">리뷰 내용</p>
           <span class="reviewdetail">{{ review.content }}</span>
         </div>
       </div>
@@ -33,17 +33,23 @@
           <!--로그인 했을 때-->
           <div v-if="isLoggedIn" class="d-inline-block">
             <!--좋아요-->
-            <span v-if="isReviewLiked">
-              <button @click="likeReview(commentData)" class="btn btn-secondary"> 리뷰 좋아요 취소 </button>
+            <span v-if="isReviewLiked" @click="likeReview(commentData)" >
+              이 리뷰 별로에요
+              <img src="@/assets/LOGO_black.png" width="25vh" class="ms-1 me-3 sm-content likebtn blackline">
             </span>
-            <span v-else>
-              <button @click="likeReview(commentData)" class="btn btn-danger"> 리뷰 좋아요 </button>
+            <span v-else @click="likeReview(commentData)" >
+              이 리뷰 좋아요
+              <img src="@/assets/LOGO_red.png" width="25vh" class="ms-1 me-3 sm-content likebtn redline">
             </span>
             <!--리뷰 수정-->
-            <div v-if="review.user === $store.state.accounts.loginUser.id" class="d-inline-block">
-              <button @click="editReview" class="btn btn-info ms-2"> 리뷰 수정 </button>
-              <button @click="deleteReview(review)" class="btn btn-dark ms-2"> 리뷰 삭제 </button>
-            </div>
+            <span v-if="review.user === $store.state.accounts.loginUser.id" class="blueline">
+              이 리뷰 수정하기
+              <img src="@/assets/LOGO_VER1.png" @click="editReview" width="25vh" class="ms-1 me-3 sm-content likebtn">
+            </span>
+            <span class="blackline">
+              이 리뷰 삭제하기
+              <img src="@/assets/LOGO_black.png" @click="deleteReview(review)" width="25vh" class="ms-1 me-3 sm-content likebtn">
+            </span>
           </div>
 
           <!--비로그인-->
@@ -56,9 +62,11 @@
         <!--작성일자-->
         <div>
           <br>
-          <span class="datetime">작성일: {{ review.created_at }}</span>
+          <!-- <span class="datetime">작성일:{{ review.created_at }}</span> -->
+          <span class="datetime">작성일: {{ created_date }}</span>
           <br>
-          <span class="datetime">수정일: {{ review.updated_at }}</span>
+          <!-- <span class="datetime">수정일: {{ review.updated_at }}</span> -->
+          <span class="datetime">수정일: {{ updated_date }}</span>
         </div>
       </div>
       <!--좋아요 및 작성일자 종료-->
@@ -67,7 +75,7 @@
 
       <!--댓글-->
       <div class="ms-2 mb-2">
-        <h3>댓글</h3>
+        <h4 class="mb-3">댓글</h4>
         <!--댓글 입력-->
         <div class="comment-input my-2">
           <!--로그인-->
@@ -75,7 +83,7 @@
             <div class="input-group">
               <input class="form-control" v-model="commentData.content" @keyup.enter="[createComment(commentData), onSubmit()]"/>
               <div class="input-group-append">
-                <button @click="[createComment(commentData), onSubmit()]" class="btn btn-primary">댓글 달기</button>
+                <button @click="[createComment(commentData), onSubmit()]" class="btn btn-comment">댓글 달기</button>
               </div>
             </div>
           </div>
@@ -122,7 +130,7 @@ export default {
         review: '',
         reply_to: '',
         content: '',
-      }
+      },
     }
   },
   methods: {
@@ -148,6 +156,12 @@ export default {
     full_backdroppath() {
       return "https://image.tmdb.org/t/p/original/" + this.review.movie.backdrop_path
     },
+    created_date() {
+      return this.review.created_at.substring(0,10)
+    },
+    updated_date() {
+      return this.review.updated_at.substring(0,10)
+    },
   },
   watch: {
     '$store.state.boards.selectedReview': function() {
@@ -166,6 +180,10 @@ export default {
 </script>
 
 <style scoped>
+.review-title {
+  color: #3396f4;
+}
+
 .reviewdetail {
   position: relative;
   font-family: 'Noto Sans KR', sans-serif;
@@ -187,9 +205,11 @@ export default {
   font-size: 20px;
 }
 
-.reviewtitle {
+.review-semititle {
   font-weight: 300;
   font-size: 20px;
+  color: #3396f4;
+  /* text-shadow: 1.5px 1.5px 1.5px rgb(113, 114, 114); */
 }
 
 .datetime {
@@ -200,4 +220,28 @@ export default {
 .comment-input {
   vertical-align: middle;
 }
+
+.likebtn {
+  position: relative;
+  z-index: 100;
+  cursor: pointer;
+}
+
+.btn-comment {
+  color: aliceblue;
+  background-color: #3396f4;
+}
+
+.redline {
+  background-color: rgb(255, 219, 219);
+}
+
+.blueline {
+  background-color: #c3e2ff;
+}
+
+.blackline {
+  background-color: rgb(187, 187, 187);
+}
+
 </style>

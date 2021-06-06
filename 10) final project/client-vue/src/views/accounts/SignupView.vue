@@ -62,6 +62,7 @@ export default {
         nickname: '',
         selected_genres: [],
       },
+      hide: true
     }
   },
   methods: {
@@ -100,6 +101,9 @@ export default {
   background-image: url("../../assets/accounts_bg.jpg");
   background-size: cover;
   background-position: center;
+  /*스크롤 무관하게 이미지 고정*/
+  position: sticky;
+  top: 0;
 }
 
 .input-box {
