@@ -247,10 +247,8 @@ def recommend_by_genre(request, genre_pk):
     genre = get_object_or_404(Genre, pk=genre_pk)
 
     movies = Movie.objects.all().filter(genres__movie__genres=genre)[:6]
-    print('here')
 
     serializer = MovieSerializer(movies, many=True)
-    print('check')
 
     return Response(serializer.data)
 

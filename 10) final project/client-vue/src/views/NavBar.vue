@@ -1,6 +1,12 @@
 <template>
-  <div id="app">
-    <nav class="nav navbar navbar-expand-lg container-fluid d-flex justify-content-between align-items-end m-2">
+  <div>
+    <!--로그인 및 회원가입 -->
+    <nav v-if="needHide" class="nav navbar navbar-expand-lg container-fluid d-flex justify-content-between align-items-end m-2">
+      <a class="navbar-brand ms-2 d-block" href="/">
+        <img src="@/assets/LOGO_KOR.png" alt="LOGO_KOR" width="168" height="35" class="ms-1 align-self-center">
+      </a>
+    </nav>
+    <nav v-else class="nav navbar navbar-expand-lg container-fluid d-flex justify-content-between align-items-end m-2">
       <!--<div class="container-fluid d-flex justify-content-between align-items-end m-2">-->
         <div class="d-inline-flex align-items-end">
 
@@ -28,29 +34,28 @@
         </div>
       <!--</div>-->
     </nav>
-    <div id="wrapper">
-      <RouterView/>
-    </div>
+
   </div>
 </template>
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
-import SearchBar from "@/components/SearchBar"
+import SearchBar from "@/components/SearchBar";
+import {mapGetters} from "vuex";
 
 export default {
-  name: 'App',
+  name: "NavBar",
   components: {
-    SearchBar
+    SearchBar,
   },
   computed: {
-    ...mapGetters(['isLoggedIn', ]),
-    ...mapActions(['fetchInitialDatum'])
-  },
-  created() {
-    this.fetchInitialDatum
+    ...mapGetters(['isLoggedIn',]),
+    // 로그인/ 회원가입에서는 검색창이랑 안보이게
+    needHide() {
+      return !!(this.$route.name === 'Signup' || this.$route.name === 'Login');
+    },
   }
 }
+
 </script>
 
 <style scoped>
@@ -67,12 +72,4 @@ export default {
   /*font-weight: bolder;*/
   font-size: 18px;
 }
-
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased; 
-  /* 텍스트가 렌더링될 때 부드럽게 표현 */
-  -moz-osx-font-smoothing: grayscale; 
-}
-
 </style>

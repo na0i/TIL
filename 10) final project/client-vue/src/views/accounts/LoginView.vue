@@ -19,7 +19,7 @@
                                 <div class="form-group mb-3">
                                     <input id="password" type="password" v-model="loginData.password" placeholder="password" required="" class="form-control border-0 shadow-sm px-4 text-primary">
                                 </div>
-                                <button type="submit" @click="login(loginData)" class="btn-sm btn-block btn-outline-primary col-12 mb-2 px-5 clickbtn">LOGIN</button>
+                                <button type="submit" @click="onClick($event)" class="btn-sm btn-block btn-outline-primary col-12 mb-2 px-5 clickbtn">LOGIN</button>
                               </form>
                           </div>
                       </div>
@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import {mapActions, mapState} from 'vuex'
 
 export default {
   name: 'LoginView',
@@ -40,12 +40,17 @@ export default {
       loginData: {
         username: null,
         password: null,
-      }
+      },
     }
   },
   methods: {
-    ...mapActions(['login'])
-  }
+    ...mapActions(['login']),
+    ...mapState(["loginUser"]),
+    onClick(event) {
+      event.preventDefault()
+      this.login(this.loginData)
+    }
+  },
 }
 </script>
 

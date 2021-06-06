@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <ul class="ks-cboxtags d-flex flex-wrap justify-content-around contain">
       <li v-for="(genre, idx) in this.$store.state.movies.genreList" :key="idx">
         <input type="checkbox" v-model="likeGenres" @click="onChange(genre)" :id="`${genre.id}`" :value="genre"><label :for="`${genre.id}`">{{ genre.name }}</label>
@@ -30,17 +29,6 @@ export default {
       this.$emit('like-genres', changed)
     }
   },
-  computed: {
-  },
-  // watch: {
-  //   changed: function() {
-  //     console.log('here')
-  //     const handler = () => {console.log(this.likeGenres); return this.likeGenres}
-  //     // 왜 여기서도 한개를 덜 잡아오죵...
-  //     console.log('---', handler())
-  //     console.log('changed')
-  //     this.$emit('like-genre')}
-  // }
 }
 </script>
 

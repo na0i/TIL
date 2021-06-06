@@ -1,41 +1,44 @@
 <template>
   <div class="container">
-    <div v-if="isEdit">
-      <input v-model="comment.content" @keyup.enter="[updateComment(commentData), updateRequested()]">
-      <button @click="updateComment(commentData), updateRequested()"> 수정 완료 </button>
-    </div>
-    <div v-else class="d-inline-block my-2">
-      <h3>{{ comment.content }}</h3>
-    </div>
+    <div v-if="isLoggedIn">
 
-  <div class="d-inline-block ms-5">
-    <span>
-      <button @click="onClick" class="btn btn-warning"> 댓글 달기 </button>
-    </span>
+      <div v-if="isEdit">
+        <input v-model="comment.content" @keyup.enter="[updateComment(commentData), updateRequested()]">
+        <button @click="[updateComment(commentData), updateRequested()]"> 수정 완료 </button>
+      </div>
+      <div v-else class="d-inline-block my-2">
+        <h3>{{ comment.content }}</h3>
+      </div>
 
-    <div v-if="comment.user === $store.state.accounts.loginUser.id" class="d-inline-block">
-      <button @click="editClicked" class="btn btn-info ms-2"> 댓글 수정 </button>
-      <button @click="deleteClicked" class="btn btn-dark ms-2"> 댓글 삭제 </button>
-    </div>
-  </div>
+    <div class="d-inline-block">
+      <span>
+        <button @click="onClick" class="btn btn-warning"> 댓글 달기 </button>
+      </span>
 
-    <div v-if="isClicked">
-      <input v-model="commentData.content" @keyup.enter="[createNestedComment(commentData), onSubmit()]">
-      <button @click="[createNestedComment(commentData), onSubmit()]"> 등록 </button>
+      <div v-if="comment.user === $store.state.accounts.loginUser.id" class="d-inline-block">
+        <button @click="editClicked" class="btn btn-info ms-2"> 댓글 수정 </button>
+        <button @click="deleteClicked" class="btn btn-dark ms-2"> 댓글 삭제 </button>
+      </div>
     </div>
 
+      <div v-if="isClicked">
+        <input v-model="commentData.content" @keyup.enter="[createNestedComment(commentData), onSubmit()]">
+        <button @click="[createNestedComment(commentData), onSubmit()]"> 등록 </button>
+      </div>
 
-    <ul v-if="!!comment.replied_by.length" class="ms-5">
-      <li v-for="(comment, idx) in comment.replied_by" :key="idx">
-        <CommentItem :comment="comment"/>
-      </li>
-    </ul>
 
+      <ul v-if="!!comment.replied_by.length" class="ms-5">
+        <li v-for="(comment, idx) in comment.replied_by" :key="idx">
+          <CommentItem :comment="comment"/>
+        </li>
+      </ul>
+
+    </div>
   </div>
 </template>
 
 <script>
-import {mapActions} from "vuex";
+import {mapActions, mapGetters} from "vuex";
 
 export default {
   name: "CommentItem",
@@ -78,6 +81,9 @@ export default {
         delete this.commentData['comment']
       }
     },
+  },
+  computed: {
+    ...mapGetters(['isLoggedIn']),
   },
   mounted() {
     this.commentData.movie = this.$route.params.movie_id

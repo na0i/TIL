@@ -31,7 +31,7 @@
                                 <div class="button-set mt-2 mb-2 ">
                                   <SignupGenreSelect @like-genres="onSelect"/>
                                 </div>
-                                <button type="submit" @click="signup(signupData)" class="btn-sm btn-block btn-outline-primary col-12 mb-2 px-5 clickbtn">WELCOME to SSATCHA WORLD!</button>
+                                <button type="submit" @click="onClick($event)" class="btn-sm btn-block btn-outline-primary col-12 mb-2 px-5 clickbtn">WELCOME to SSATCHA WORLD!</button>
                             </form>
                         </div>
                     </div>
@@ -66,9 +66,14 @@ export default {
   },
   methods: {
     ...mapActions(['signup']),
-    ...mapState({genreList: state => state.movies.genreList}), // ?? 왜 안대?
+    ...mapState({genreList: state => state.movies.genreList}),
     onSelect(likeGenres) {
       this.signupData.selected_genres = likeGenres
+    },
+    onClick(event) {
+      // 이거 해주지 않으면 페이지가 새로고침되면서 Bad pipe 에러가 발생합니다.
+      event.preventDefault()
+      this.signup(this.signupData)
     }
   }
 }

@@ -1,10 +1,11 @@
 <template>
   <div>
-    <div class="container">
+    <hr><hr><hr><hr>
+    <div class="container ms-4 mt-5">
       <h1 class="bold description">검색 결과</h1>
-    </div>
-    <div class="container" style="margin-top: 20vh">
-      <li class="row row-cols-6">
+    <!--</div>-->
+    <!--<div class="container">-->
+      <li class="row row-cols-6 mt-4">
         <MovieListItem v-for="movie in this.$store.state.movies.searchResults" :key="`${movie.id}`" :movie="movie"/>
       </li>
     </div>
@@ -33,7 +34,7 @@ export default {
 
 .description {
   z-index: 1;
-  margin-top: 50px;
+  color: white;
 }
 
 </style>

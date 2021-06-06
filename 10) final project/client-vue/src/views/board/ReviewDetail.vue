@@ -1,65 +1,101 @@
 <template>
-  <div>
-    <p>r</p>
-
+  <div class="container-fluid">
     <img class="backdrop" :src="full_backdroppath" width="100%">
-    <div class="container-fluid reviewdetail">
-        <!-- <img src="@/assets/LOGO_VER1.png"> -->
+    <!--리뷰-->
+    <div class="reviewdetail">
         <br><br><br>
-          <div @click="setMovieDetail(review.movie.id)" class="h3 d-inline-block">
-            <RouterLink :to="`/${review.movie.id}`" class="text-decoration-none">
-              {{ review.movie.title }}
-            </RouterLink>
-          </div>
+      <div class="ms-3" style="margin-top: 30px">
+        <!--영화제목-->
+        <div @click="setMovieDetail(review.movie.id)" class="h3 d-inline-block">
+          <RouterLink :to="`/${review.movie.id}`" class="text-decoration-none">
+            <h2>{{ review.movie.title }}</h2>
+          </RouterLink>
+        </div>
 
+        <!--리뷰상세-->
         <div class="about-review">
           <span class="reviewtitle fw-bold">리뷰 제목 : </span>
           <span class="reviewdetail">{{ review.title }}</span>
           <br>
           <span class="reviewtitle fw-bold">평가 : </span>
           <span class="reviewdetail">{{ review.rank }}</span>
-
+          <br>
           <p class="reviewtitle fw-bold mt-1">리뷰 내용</p>
           <span class="reviewdetail">{{ review.content }}</span>
-          
         </div>
+      </div>
 
-          <div align="right">
-            <br>
-            <span class="datetime">작성일: {{ review.created_at }}</span>
-            <br>
-            <span class="datetime">수정일: {{ review.updated_at }}</span>
+      <!--좋아요 및 작성일자-->
+      <div class="container-fluid d-inline-block d-flex justify-content-between">
+        <!--좋아요 버튼-->
+        <div>
+        <br>
+          <!--로그인 했을 때-->
+          <div v-if="isLoggedIn" class="d-inline-block">
+            <!--좋아요-->
+            <span v-if="isReviewLiked">
+              <button @click="likeReview(commentData)" class="btn btn-secondary"> 리뷰 좋아요 취소 </button>
+            </span>
+            <span v-else>
+              <button @click="likeReview(commentData)" class="btn btn-danger"> 리뷰 좋아요 </button>
+            </span>
+            <!--리뷰 수정-->
+            <div v-if="review.user === $store.state.accounts.loginUser.id" class="d-inline-block">
+              <button @click="editReview" class="btn btn-info ms-2"> 리뷰 수정 </button>
+              <button @click="deleteReview(review)" class="btn btn-dark ms-2"> 리뷰 삭제 </button>
+            </div>
           </div>
 
-        <span v-if="isReviewLiked">
-          <button @click="likeReview(commentData)" class="btn btn-secondary"> 리뷰 좋아요 취소 </button>
-        </span>
-        <span v-else>
-          <button @click="likeReview(commentData)" class="btn btn-danger"> 리뷰 좋아요 </button>
-        </span>
-
-
-        <div v-if="review.user === $store.state.accounts.loginUser.pk">
-          <button @click="editReview" class="btn btn-info ms-2"> 리뷰 수정 </button>
-          <button @click="deleteReview(review)" class="btn btn-dark ms-2"> 리뷰 삭제 </button>
+          <!--비로그인-->
+          <div v-else class="d-inline-block">
+            <h5>
+              리뷰에 좋아요를 누르려면 <a href="/accounts/login">로그인</a>이 필요합니다.
+            </h5>
+          </div>
         </div>
+        <!--작성일자-->
+        <div>
+          <br>
+          <span class="datetime">작성일: {{ review.created_at }}</span>
+          <br>
+          <span class="datetime">수정일: {{ review.updated_at }}</span>
+        </div>
+      </div>
+      <!--좋아요 및 작성일자 종료-->
 
+      <hr>
 
-        <hr>
-
+      <!--댓글-->
+      <div class="ms-2 mb-2">
         <h3>댓글</h3>
-        <div class="comment-input">
-          <input class="me-1" v-model="commentData.content" @keyup.enter="[createComment(commentData), onSubmit()]"/>
-          <button @click="[createComment(commentData), onSubmit()]" class="btn btn-primary">댓글 달기</button>
+        <!--댓글 입력-->
+        <div class="comment-input my-2">
+          <!--로그인-->
+          <div v-if="isLoggedIn">
+            <div class="input-group">
+              <input class="form-control" v-model="commentData.content" @keyup.enter="[createComment(commentData), onSubmit()]"/>
+              <div class="input-group-append">
+                <button @click="[createComment(commentData), onSubmit()]" class="btn btn-primary">댓글 달기</button>
+              </div>
+            </div>
+          </div>
+          <!--비로그인-->
+          <div v-else>
+            <h5> 댓글을 달기 위해서는 <a href="/accounts/login">로그인</a>이 필요합니다.</h5>
+          </div>
         </div>
-
+        <!--댓글 보여주기-->
         <div v-if="isCommented">
-          <ul>
-            <li v-for="(comment, idx) in notNestedComments" :key="idx">
+          <div class="mt-2">
+            <hr>
+            <div v-for="(comment, idx) in notNestedComments" :key="idx">
               <CommentItem :comment="comment"/>
-            </li>
-          </ul>
+            </div>
+          </div>
         </div>
+        <!--댓글 보여주기-->
+      </div>
+      <!--댓글-->
     </div>
   </div>
 </template>
@@ -105,7 +141,7 @@ export default {
   },
   computed: {
     ...mapState({selectedReview: state => state.boards.selectedReview}),
-    ...mapGetters(['isReviewLiked', 'notNestedComments', 'getMovieId']),
+    ...mapGetters(['isReviewLiked', 'notNestedComments', 'getMovieId', 'isLoggedIn']),
     isCommented() {
       return !!this.review.comment_set;
     },
@@ -142,7 +178,7 @@ export default {
   position: absolute;
   opacity: 0.1;
   z-index: 1;
-  margin-top: 60px;
+  margin-top: 80px;
 }
 
 .about-review {
@@ -151,12 +187,12 @@ export default {
   font-size: 20px;
 }
 
-.review-title {
+.reviewtitle {
   font-weight: 300;
   font-size: 20px;
 }
 
-.date-time {
+.datetime {
   font-size: 15px;
   text-align: right;
 }

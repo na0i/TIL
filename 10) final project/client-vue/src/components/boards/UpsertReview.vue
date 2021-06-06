@@ -1,58 +1,55 @@
 <template>
   <div>
+    <div class="upsertreview">
 
-  <div class="upsertreview">
-    <div class="d-flex justify-content-between align-items-stretch" style="margin-top: 20vh">
-      <div>
-        <h5 v-if="isUpdate" class="review">리뷰 수정</h5>
-        <h5 v-else class="review"> 리뷰 작성</h5>
-
-        <h4 class="review-title">{{ selectedMovie.title }} </h4>
+    
+      <div class="d-flex justify-content-between align-items-stretch" style="margin-top: 20vh">
+        <div>
+          <h5 v-if="isUpdate" class="review">리뷰 수정</h5>
+          <h5 v-else class="review"> 리뷰 작성</h5>
+          <h4 class="review-title">{{ selectedMovie.title }} </h4>
+        </div>
       </div>
 
+      <div class="form_group field">
+        <input type="text" v-model="reviewData.title" class="form_field" placeholder="Review Title" name="name" id='name' required />
+        <label for="name" class="form_label">리뷰 제목을 입력하세요. </label>
+      </div>
+
+      <div class="form_group field">
+        <textarea v-model="reviewData.content" id="content" rows="5" placeholder="Review Content" content="content" class="form_field" required></textarea>
+        <label for="content" class="form_label">리뷰 내용을 입력하세요. </label>
+      </div>
+
+      <div class="container d-flex justify-content-center mt-3">
+
+
+          <div class="mt-5">
+            <span v-if="isUpdate">
+              <button @click="updateReview(reviewData)" class="button mt-3"> 수정 완료 </button>
+            </span>
+            <span v-else>
+              <button @click="createReview(reviewData)" class="button mt-3"> 작성 완료 </button>
+            </span>
+          </div>
+
+
+          <div class="row">
+            <div class="col-3">
+              <div class="optionbox">
+                <select id="rank" v-model="reviewData.rank">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+      </div>
     </div>
-
-    <div class="form_group field">
-      <input type="text" v-model="reviewData.title" class="form_field" placeholder="Review Title" name="name" id='name' required />
-      <label for="name" class="form_label">리뷰 제목을 입력하세요. </label>
-    </div>
-
-    <div class="form_group field">
-      <textarea v-model="reviewData.content" id="content" rows="5" placeholder="Review Content" content="content" class="form_field" required></textarea>
-      <label for="content" class="form_label">리뷰 내용을 입력하세요. </label>
-    </div>
-
-
-</div>
-
-<div class="container d-flex justify-content-center mt-3">
-<div class="mt-5">
-    <span v-if="isUpdate">
-      <button @click="updateReview(reviewData)" class="button mt-3"> 수정 완료 </button>
-    </span>
-    <span v-else>
-      <button @click="createReview(reviewData)" class="button mt-3"> 작성 완료 </button>
-    </span>
-  </div>
-
-
-  <div class="row">
-    <div class="col-3">
-     <div class="optionbox">
-      <select id="rank" v-model="reviewData.rank">
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-     </div>
-    </div>
-  </div>
-
-</div>
-
-
   </div>
 </template>
 

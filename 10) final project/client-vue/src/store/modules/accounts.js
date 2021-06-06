@@ -31,8 +31,6 @@ const mutations = {
 const actions = {
   // 추천
   recommendByUser({commit, state}) {
-    // const genres = state.loginUser.like_genres
-    // console.log(genres)
     const genreId = _.sample(state.loginUser.like_genres)
     axios.get(DRF.URL + `genres/${genreId}/`)
       .then((res) => commit('SET_REC_BY_USER', res.data))
@@ -56,7 +54,7 @@ const actions = {
   },
 
 
-  // login 하면 list 페이지로 이동
+  // login
   loginpostAuthData({ commit, dispatch }, { path, data }) {
     const FULL_URL_PATH = DRF.URL + path
     axios.post(FULL_URL_PATH, data)
@@ -65,9 +63,9 @@ const actions = {
         cookies.set('auth-token', res.data.key, '2d')
         dispatch('getLoginUser')
       })
-      // .then(() => {
-        // router.push('/')
-      // })
+      .then(() => {
+        router.go(-1)
+      })
       .catch(err => {
         console.error(err.response.data)
       })
@@ -79,14 +77,13 @@ const actions = {
     const FULL_URL_PATH = DRF.URL + path
     axios.post(FULL_URL_PATH, data)
       .then(res => {
-        console.log(res.data.key)
         commit('SET_TOKEN', res.data.key)
         cookies.set('auth-token', res.data.key, '2d')
-        dispatch('getLoginUser')
       })
-      // .then(() => {
-        // router.push('/')
-      // })
+      .then(() => {
+        dispatch('getLoginUser')
+        router.go(-1)
+      })
       .catch(err => {
         console.log(err.response.data)
         console.error(err.response.data)
@@ -116,10 +113,10 @@ const actions = {
       .then(() => {  // Django DB 테이블에서는 삭제 | cookie, state 에서는 존재
         cookies.remove('auth-token')  // cookie 삭제 | state 에서는 존재
         cookies.remove('login-user')
-        commit('SET_TOKEN', null)  // state 에서도 삭제
-        commit('SET_USER', null)
-        router.go(-1)
+        commit('SET_TOKEN', '')  // state 에서도 삭제
+        commit('SET_USER', '')
       })
+      .then(() => router.go(-1))
       .catch(err => console.error(err.response.data))
   },
 }

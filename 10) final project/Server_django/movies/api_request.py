@@ -59,8 +59,6 @@ def search_tmdb(query, page=1, include_adult=True, region='ko', primary_release_
 
     response = requests.get(url).json()['results']
 
-    pprint.pprint(response)
-
     return response
 
 
@@ -115,7 +113,6 @@ def get_genre_list(genres):
 
 
 def save_movie(data):
-    pprint.pprint(data)
     movie_pk = data['id']
     serializer = MovieSerializer(data=data)
     if serializer.is_valid(raise_exception=True):

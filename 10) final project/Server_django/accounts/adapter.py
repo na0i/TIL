@@ -2,8 +2,6 @@ from allauth.account.adapter import DefaultAccountAdapter
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
-from movies.models import Genre
-
 User = get_user_model()
 
 

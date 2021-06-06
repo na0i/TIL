@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container-fluid">
     <div class="input-group">
       <input class="form-control" v-model="query">
       <button class="btn btn-close-white" @click="onClick"> Go! </button>
@@ -21,6 +21,7 @@ export default {
     ...mapActions(['searchMovie']),
     onClick() {
       this.searchMovie(this.query)
+      this.query = ''
     }
   }
 }

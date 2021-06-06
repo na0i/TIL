@@ -9,11 +9,13 @@
       <div class="carousel-inner">
         <div class="carousel-item active">
           <img src="@/assets/interstella.jpg" class="d-block w-100" height="100%" alt="interstella_poster">
+          <!--<a href="">-->
           <div class="carousel-caption d-none d-md-block">
             <div class="mb-5 pb-3">
               <h2 class="fw-bolder">I N T E R S T E L L A R</h2>
               <span class="carousel-font">" We will find a way. We always have. "</span>
             </div>
+          <!--</a>-->
             <div>
               <a href="https://www.youtube.com/watch?v=d2VN6NNa9BE" class="carousel-font fw-bold">
                 <img src="@/assets/LOGO_VER1.png" width="30" height="30" class="mb-2">
