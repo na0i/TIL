@@ -35,18 +35,18 @@
             <!--좋아요-->
             <span v-if="isReviewLiked" @click="likeReview(commentData)" >
               이 리뷰 별로에요
-              <img src="@/assets/LOGO_black.png" width="25vh" class="ms-1 me-3 sm-content likebtn blackline">
+              <img src="@/assets/LOGO_black.png" width="25vh" class="ms-1 me-3 sm-content likebtn">
             </span>
             <span v-else @click="likeReview(commentData)" >
               이 리뷰 좋아요
-              <img src="@/assets/LOGO_red.png" width="25vh" class="ms-1 me-3 sm-content likebtn redline">
+              <img src="@/assets/LOGO_red.png" width="25vh" class="ms-1 me-3 sm-content likebtn">
             </span>
             <!--리뷰 수정-->
-            <span v-if="review.user === $store.state.accounts.loginUser.id" class="blueline">
+            <span v-if="review.user === $store.state.accounts.loginUser.id">
               이 리뷰 수정하기
               <img src="@/assets/LOGO_VER1.png" @click="editReview" width="25vh" class="ms-1 me-3 sm-content likebtn">
             </span>
-            <span class="blackline">
+            <span>
               이 리뷰 삭제하기
               <img src="@/assets/LOGO_black.png" @click="deleteReview(review)" width="25vh" class="ms-1 me-3 sm-content likebtn">
             </span>
@@ -75,13 +75,13 @@
 
       <!--댓글-->
       <div class="ms-2 mb-2">
-        <h4 class="mb-3">댓글</h4>
+        <h4 class="mb-3">쌓인 댓글 보기</h4>
         <!--댓글 입력-->
         <div class="comment-input my-2">
           <!--로그인-->
           <div v-if="isLoggedIn">
             <div class="input-group">
-              <input class="form-control" v-model="commentData.content" @keyup.enter="[createComment(commentData), onSubmit()]"/>
+              <input class="form-control comment-input" v-model="commentData.content" @keyup.enter="[createComment(commentData), onSubmit()]"/>
               <div class="input-group-append">
                 <button @click="[createComment(commentData), onSubmit()]" class="btn btn-comment">댓글 달기</button>
               </div>
@@ -219,6 +219,13 @@ export default {
 
 .comment-input {
   vertical-align: middle;
+  background-color: transparent;
+}
+
+.comment-input:hover {
+  color: white;
+  background-color: #3397f411;
+  border: 0.5px solid #3396f4;
 }
 
 .likebtn {
@@ -230,18 +237,6 @@ export default {
 .btn-comment {
   color: aliceblue;
   background-color: #3396f4;
+  border-radius: 1px;
 }
-
-.redline {
-  background-color: rgb(255, 219, 219);
-}
-
-.blueline {
-  background-color: #c3e2ff;
-}
-
-.blackline {
-  background-color: rgb(187, 187, 187);
-}
-
 </style>

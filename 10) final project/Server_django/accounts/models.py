@@ -35,7 +35,7 @@ from movies.models import Genre
 
 class User(AbstractUser):
     username = models.CharField(max_length=10, unique=True)
-    nickname = models.CharField(max_length=10)
+    nickname = models.CharField(max_length=10, unique=True)
     email = models.EmailField(blank=True, null=True)
     like_genres = models.ManyToManyField(Genre, related_name='like_users')
 

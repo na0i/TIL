@@ -29,7 +29,7 @@
               <div class="mt-3 underrow">
                 <!-- 평점 check box -->
                 <span class="col-3 optionbox">
-                <span>별점 :  </span>
+                <span>평점 :  </span>
                 <select id="rank" v-model="reviewData.rank">
                     <option value="1">1</option>
                     <option value="2">2</option>

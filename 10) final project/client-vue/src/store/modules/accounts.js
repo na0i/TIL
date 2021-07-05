@@ -9,7 +9,7 @@ const state = {
   authToken: cookies.get('auth-token'),
   loginUser: cookies.get('login-user'),
   recByUser: [],
-
+  validationError: {}
 }
 
 const getters = {
@@ -27,6 +27,9 @@ const mutations = {
   SET_REC_BY_USER(state, data) {
     state.recByUser = data
   },
+  SET_VALIDATION_ERROR(state, error) {
+    state.validationError = error
+  }
 }
 
 const actions = {
@@ -48,12 +51,16 @@ const actions = {
       .catch((err) => console.log(err))
   },
 
-  // 프로필 페이지 열면
+  // 프로필 페이지 열었을 때, 사용자 정보 불러오기
   profileSetting({dispatch}) {
     dispatch('getLoginUser')
       .then(() => dispatch('recommendByUser'))
   },
 
+  // 입력 폼 검증
+  setValidationError({commit}, error) {
+    commit('SET_VALIDATION_ERROR', error)
+  },
 
   // login
   loginpostAuthData({ commit, dispatch }, { path, data }) {
@@ -67,7 +74,7 @@ const actions = {
       .then(() => {
         router.go(-1)
       })
-      .catch(() => alert('일치하는 아이디 혹은 비밀번호가 없습니다.'))
+      .catch(err => dispatch('setValidationError', err.response.data))
   },
 
   signuppostAuthData({ commit, dispatch }, { path, data }) {
@@ -82,13 +89,7 @@ const actions = {
         router.go(-1)
       })
       .catch(err => {
-        // username 오류
-        if (err.response.data.username) {
-
-
-          alert(err.response.data.username)
-        }
-        alert(err.response.data[0])
+        dispatch('setValidationError', err.response.data)
         console.error(err.response.data)
       })
   },

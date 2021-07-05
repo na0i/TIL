@@ -1,7 +1,7 @@
 <template>
   <div>
     <ul class="ks-cboxtags d-flex flex-wrap justify-content-around contain">
-      <li v-for="(genre, idx) in this.$store.state.movies.genreList" :key="idx">
+      <li v-for="(genre, idx) in genreList" :key="idx">
         <input type="checkbox" v-model="likeGenres" @click="onChange(genre)" :id="`${genre.id}`" :value="genre"><label :for="`${genre.id}`">{{ genre.name }}</label>
       </li>
     </ul>
@@ -9,6 +9,8 @@
 </template>
 
 <script>
+import {mapState} from "vuex";
+
 export default {
   name: "SignupGenreSelect",
   data() {
@@ -29,6 +31,12 @@ export default {
       this.$emit('like-genres', changed)
     }
   },
+  computed: {
+    ...mapState({
+      genreList: state => state.movies.genreList,
+    })
+
+  }
 }
 </script>
 

@@ -66,16 +66,20 @@ def get_providers(movie_id, method, provider):
 
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    methods = ['flatrate', 'rent', 'buy']
+    methods = {'flatrate': 'Watch', 'rent': 'Rent', 'buy': 'Buy'}
 
     link = ''
-    for i in range(3):
-        if method == methods[i]:
-            datum = soup.select(f'#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child({i+4}) > div > ul > li.ott_filter_best_price a')
-            for data in datum:
+    is_find = False
+    for i in range(4, 7):
+        datum = soup.select(f'#ott_offers_window > section > div.header_poster_wrapper > div > div:nth-child({i}) > div > ul > li > div > a')
+        for data in datum:
+            if methods[method] in data.attrs["title"]:
                 if provider in data.attrs["title"]:
                     link = data.attrs["href"]
+                    is_find = True
                     break
+        if is_find:
+            break
 
     return link
 

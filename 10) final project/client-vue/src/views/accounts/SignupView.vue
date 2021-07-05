@@ -14,7 +14,10 @@
                             <p class="text-muted mb-3">CREATE ACCOUNT</p>
                             <form class="accounts-form">
                                 <div class="input-box form-group mb-1 pb-1">
-                                    <input id="username" type="text" v-model="signupData.username" placeholder="username" required="" class="form-control border-0 shadow-sm px-4 text-primary">
+                                    <input id="username" type="text" v-model="signupData.username" placeholder="ID" required="" class="form-control border-0 shadow-sm px-4 text-primary">
+                                    <!--<span v-if="usernameError">-->
+                                    <!--  {{ this.errorMessage.username }}-->
+                                    <!--</span>-->
                                 </div>
                                 <div class="form-group mb-1 pb-1">
                                       <input id="nickname" type="text" v-model="signupData.nickname" placeholder="nickname" required="" class="form-control border-0 shadow-sm px-4 text-primary">
@@ -56,18 +59,23 @@ export default {
     return {
       signupData: {
         username: '',
+        nickname: '',
+        email: '',
         password1: '',
         password2: '',
-        email: '',
-        nickname: '',
         selected_genres: [],
       },
-      hide: true
+      errorMessage: {
+        username: '',
+        nickname: '',
+        email: '',
+        password1: '',
+        password2: ''
+      }
     }
   },
   methods: {
     ...mapActions(['signup']),
-    ...mapState({genreList: state => state.movies.genreList}),
     onSelect(likeGenres) {
       this.signupData.selected_genres = likeGenres
     },
@@ -76,7 +84,28 @@ export default {
       event.preventDefault()
       this.signup(this.signupData)
     }
-  }
+  },
+  computed: {
+    ...mapState({
+      validationError: state => state.accounts.validationError
+    }),
+    // usernameError() {
+    //   if (this.validationError.username) {
+    //     if (this.validationError.username.includes('10')) {
+    //       this.errorMessage.username = '아이디는 10자까지 설정 가능합니다.'
+    //     } else if (this.validationError.username.includes('numeric')) {
+    //       this.errorMessage.username = '숫자로만 이루어진 아이디는 사용하실 수 없습니다.'
+    //     } else if (this.errorMessage.username.includes('short')) {
+    //       this.errorMessage.username = '아이디가 너무 짧습니다.'
+    //     } else {
+    //       this.errorMessage.username = this.validationError.username
+    //     }
+    //     return true
+    //   } else {
+    //     return false
+    //   }
+    // }
+  },
 }
 </script>
 

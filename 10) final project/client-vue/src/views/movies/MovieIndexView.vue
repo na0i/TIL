@@ -81,6 +81,12 @@
       </button>
     </div>
     <div class="container">
+      <p id="semititle" class="fw-bolder mt-3">NOW PLAYING</p>
+      <div>
+        <li class="row row-cols-6">
+          <MovieListItem v-for="movie in nowPlaying.slice(0,12)" :key="`${movie.id}`" :movie="movie"/>
+        </li>
+      </div>
       <p id="semititle" class="fw-bolder mt-3">TOP RATED</p>
       <div>
         <li class="row row-cols-6">
@@ -140,7 +146,8 @@ export default {
       topRated: state => state.movies.recommendMovie.topRated,
       popular: state => state.movies.recommendMovie.popular,
       korean: state => state.movies.recommendMovie.korean,
-      classic: state => state.movies.recommendMovie.classic
+      classic: state => state.movies.recommendMovie.classic,
+      nowPlaying: state => state.movies.recommendMovie.nowPlaying
     }),
   },
 }

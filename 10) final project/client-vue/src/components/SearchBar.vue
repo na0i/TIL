@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <div class="input-group">
-      <input class="form-control" v-model="query">
+      <input class="form-control" v-model="query" placeholder="영화 제목을 검색해보세요!">
       <button class="btn btn-close-white" @click="onClick"> Go! </button>
     </div>
   </div>

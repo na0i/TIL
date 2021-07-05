@@ -4,7 +4,7 @@
         <!-- The image half -->
         <div class="col-md-6 d-none d-md-flex bg-image"></div>
           <!-- The content half -->
-          <div class="col-md-6 bg-light">
+          <div class="col-md-6 bg-light" style="height: 100vh">
               <div class="login d-flex align-items-center py-5">
                   <!-- Demo content-->
                   <div class="container">
@@ -14,10 +14,22 @@
                               <p class="text-muted mb-3">LOGIN</p>
                               <form class="accounts-form">
                                 <div class="form-group mb-3">
-                                    <input id="username" type="text" v-model="loginData.username" placeholder="username" required="" class="form-control border-0 shadow-sm px-4 text-primary">
+                                    <input id="username" type="text" v-model="loginData.username" placeholder="ID" class="form-control border-0 shadow-sm px-4 text-primary" required="">
+                                    <span v-if="validationError.username" class="validation ms-1">
+                                      아이디를 입력해주세요.
+                                    </span>
                                 </div>
                                 <div class="form-group mb-3">
-                                    <input id="password" type="password" v-model="loginData.password" placeholder="password" required="" class="form-control border-0 shadow-sm px-4 text-primary">
+                                    <input id="password" type="password" v-model="loginData.password" placeholder="password" class="form-control border-0 shadow-sm px-4 text-primary" required="">
+                                    <span v-if="validationError.password" class="validation ms-1">
+                                        비밀번호를 입력해주세요.
+                                      </span>
+                                </div>
+                                <div v-if="validationError.non_field_errors" class="validation ms-1">
+                                  입력하신 정보와 일치하는 아이디 혹은 비밀번호가 존재하지 않습니다.
+                                  <br>
+                                  확인 후 다시 입력해주세요.
+                                  <br><br>
                                 </div>
                                 <button type="submit" @click="onClick($event)" class="btn-sm btn-block btn-outline-primary col-12 mb-2 px-5 clickbtn">LOGIN</button>
                               </form>
@@ -45,12 +57,16 @@ export default {
   },
   methods: {
     ...mapActions(['login']),
-    ...mapState(["loginUser"]),
     onClick(event) {
       event.preventDefault()
       this.login(this.loginData)
     }
   },
+  computed: {
+    ...mapState({
+      validationError: state => state.accounts.validationError
+    }),
+  }
 }
 </script>
 
@@ -76,5 +92,11 @@ export default {
   background: #3396f4;
   font-family: 'Noto Sans KR', sans-serif;
   font-size: 15px;
+}
+
+.validation {
+  color: red;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 10px;
 }
 </style>

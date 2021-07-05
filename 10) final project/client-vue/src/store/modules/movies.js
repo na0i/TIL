@@ -13,6 +13,7 @@ const state = {
     popular: [],
     korean: [],  // 한국 영화 평점순
     classic: [],
+    nowPlaying: [],
   },
 
   // 영화 선택
@@ -66,6 +67,9 @@ const mutations = {
   },
   SET_CLASSIC: (state, classic) => {
     state.recommendMovie.classic = classic
+  },
+  SET_NOW_PLAYING: (state, nowPlaying) => {
+    state.recommendMovie.nowPlaying = nowPlaying
   },
   //^^^ 초기 세팅 ^^^//
 
@@ -130,6 +134,10 @@ const actions = {
       })
       .catch(err => console.log(err))
 
+    // 3. 상영중 영화
+    axios.get('https://api.themoviedb.org/3/movie/now_playing?api_key=1f6f8f7d643eea003df9f19e38d13c3d&language=ko-KR&page=1')
+      .then(res => commit('SET_NOW_PLAYING', res.data.results))
+      .catch(err => console.log(err))
     // 1. 영화 전체 목록
     axios.get(DRF.URL)
       .then(res => commit('SET_MOVIE_LIST', res.data))
@@ -176,7 +184,7 @@ const actions = {
   },
 
   // 영화 볼 수 있는 사이트 크롤링
-  crawlingProvider({commit}, {method, provider, movie}) {
+  crawlingProvider(context, {method, provider, movie}) {
     axios.get(DRF.URL + `${movie}/provider/`, {
       params: {
         method: method,
@@ -184,8 +192,6 @@ const actions = {
       }
     })
       .then((res) => {
-        // 에러때문에 아래 문장 잠시 주석 해제할게요
-        commit('SET_SELECTED_PROVIDER_LINK', res.data.link)
         if (res.data.link === '') {
           alert('앗! 죄송합니다. 해당 사이트로 연결이 불가합니다.')
         } else {
