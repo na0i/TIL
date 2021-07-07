@@ -1,7 +1,0 @@
-vue add router
-vue add vuex
-npm i axios
-npm install bootstrap-vue bootstrap
-npm install vue-cookies
-pip install django-imagekit
-pip install pillow
