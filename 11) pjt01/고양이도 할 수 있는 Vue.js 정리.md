@@ -431,5 +431,148 @@ Var app = new Vue({
 
 ##### 속성 데이터 바인딩 하기
 
+```html
+<input type="text" v-bind:value="message">
+```
 
 
+
+`v-bind 장식자`
+
+| 장식자 | 의미                                       |
+| ------ | ------------------------------------------ |
+| .prop  | 속성 대신에 DOM 속성으로 바인딩            |
+| .camel | 케밥 케이스 속성 이름을 카멜 케이스로 변환 |
+| .sync  | 양방 바인딩                                |
+
+
+
+````html
+<div v-bind:text-content.prop="message">
+    ...
+</div>
+````
+
+
+
+`데이터 내용 확인`
+
+```html
+<pre>{{ $data }}</pre>
+```
+
+위와 같이 태그를 작성하면, 현재 데이터 전체의 상태가 어떤지 JSON 형식으로 화면에 출력
+
+
+
+##### 메서드 내부에서 데이터 또는 다른 메서드에 접근하기
+
+메서드 내부에서는 this를 붙여야 함
+
+this는 인스턴스를 나타내며
+
+new Vue() 로 생성된 인스턴스, new Vue() 로 생성된 인스턴스의 리턴값을 나타냄
+
+예시) 인스턴스가 컴포넌트라면, this는 컴포넌트 인스턴스 자체를 나타냄
+
+
+
+##### this가 무엇을 나타내는가
+
+콜백으로 익명 함수를 사용하거나, 다른 라이브러리와 함께 사용할 경우 this의 내용 변경 가능
+
+
+
+[잘못된 예]
+
+```javascript
+methods: {
+	increment: function(){
+		setTimeout(function() { this.count++ }, 100)
+	}
+}
+```
+
+이 경우, 콜백 내부의 this는 window 객체
+
+
+
+##### 여러개의 속성 데이터 바인딩
+
+```javascript
+Var app = new Vue({
+    el: '#app',
+    data: {
+        item: {
+            id: 1,
+            src: 'item1.jpg',
+            alt: '상품1의 썸네일'
+        },
+    }
+})
+```
+
+```
+<img v-bind="item">  //한 번에 바인딩 가능
+<img v-bind="item" v-bind:id="'thumb-'+item.id">  //특정 요소만 따로 지정도 가능
+```
+
+
+
+##### SVG 데이터 바인딩하기
+
+SVG: 확장 가능한 벡터 그래픽
+
+
+
+원의 반지름 변화시키기
+
+```html
+<div id="app">
+    <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+    	<circle cx="100" cy="75" v-bind:r="radius" fill="lightpink"/>
+    </svg>
+    <input type="range" min="0" max="100" v-model="radius">
+</div>
+```
+
+```javascript
+new Vue({
+	el: '#app',
+	data: {
+		radius: 50
+	}
+})
+```
+
+
+
+
+
+#### 9. 템플릿에서 조건 분기하기
+
+v-if와 v-show: 적용한 요소의 출력 여부를 바꿈, 속성 값이 true 일 때만 요소를 출력
+
+
+
+##### v-if와 v-show의 차이와 사용 방법 구분
+
+1. v-if 조건으로 렌더링하기
+
+조건 만족 X인 경우 → DOM 레벨에서 제거, 모든 감시도 제거, 컴포넌트라면 인스턴스 제거, 상태 초기화
+
+디렉티브나 컴포넌트 많이 사용하는 경우
+
+그룹으로 만들어 단일 요소에 사용 가능
+
+v-else-if와 v-else 디렉티브를 조합해 여러개 조건 지정 가능
+
+
+
+2. v-show 조건으로 출력하기
+
+조건 만족 X인 경우 → 단순하게 display:none 스타일 적용, 눈에 보이지 않더라도 모든 리액티브 데이터에 대한 내부적 감시
+
+컴포넌트나 디렉티브 없고, 변경 빈도 높을 경우 유리
+
+그룹으로 만들어 단일 요소에 사용 불가능
