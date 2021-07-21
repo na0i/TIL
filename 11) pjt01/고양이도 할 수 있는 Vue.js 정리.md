@@ -28,8 +28,6 @@ Vue.js 개발을 지원해주는 도구
 
 ---------
 
-
-
 ### CHAPTER 01_Vue.js 프레임워크의 기초
 
 #### 1. Vue.js 개요
@@ -44,11 +42,15 @@ Vue.js 개발을 지원해주는 도구
 
 
 
+
+
 #### 2. Vue.js의 키 컨셉
 
 데이터가 먼저 존재하고 데이터를 기반으로 적절한 DOM을 구축
 
 Data-driven
+
+
 
 
 
@@ -60,6 +62,8 @@ HTML 기반
 
 
 
+
+
 ##### 데이터 바인딩
 
 데이터와 렌더링을 동기화 하는 구조
@@ -68,11 +72,15 @@ HTML 기반
 
 
 
+
+
 ##### 컴포넌트 지향 화면
 
 컴포넌트: 기능별로 자바스크립트와 템플릿, CSS를 세트로 묶어, 다른 기능과 분리하여 개발 할 수 있도록 함
 
 컴포넌트를 조합하면 페이지를 구조화해서 만들 수 있음
+
+
 
 
 
@@ -88,9 +96,13 @@ HTML 기반
 
 
 
+
+
 #### 5. Vue.js의 기본 기능
 
 디렉티브와 템플릿을 연동하는 형태로 사용
+
+
 
 
 
@@ -112,6 +124,8 @@ var app = new Vue({
     }
 })
 ```
+
+
 
 
 
@@ -148,9 +162,13 @@ var app = new Vue({
 
 
 
+
+
 ##### 이벤트 사용
 
 DOM 이벤트 바인딩(연결)을 할 때는 v-on 디렉티브 사용
+
+
 
 
 
@@ -186,6 +204,8 @@ var app = new Vue({
 
 
 
+
+
 ##### 조건 분기
 
 v-if 디렉티브를 사용하면 템플릿 기반의 조건 분기 실시 가능
@@ -206,6 +226,8 @@ Var app = new Vue({
     }
 })
 ```
+
+
 
 
 
@@ -242,6 +264,8 @@ opacity 0에서 1까지 페이드인&페이드아웃 효과 적용
     opacity: 0
 }
 ```
+
+
 
 
 
@@ -344,8 +368,6 @@ Vue.js는 라이프 사이클을 미리 등록해 적절한 시기에 자동으�
 
 --------
 
-
-
 ### CHAPTER 02_Vue.js 데이터 등록과 변경
 
 #### 07. 데이터 바인딩
@@ -354,9 +376,13 @@ DOM 변경을 자동화하는 데이터 바인딩을 하려면, 템플릿에서 
 
 
 
+
+
 ##### 리액티브 데이터란
 
 리액티브 시스템: DOM  변경을 최적화, 데이터 동기화, 변경 감지
+
+
 
 
 
@@ -383,6 +409,8 @@ Vue.js 데이터로 등록하면 모두 리액티브 데이터로 변환됨
 
 
 
+
+
 #### 08. 텍스트와 속성 데이터 바인딩
 
 ##### 텍스트와 데이터 바인딩
@@ -392,6 +420,8 @@ Vue.js 데이터로 등록하면 모두 리액티브 데이터로 변환됨
 텍스트 콘텐츠의 해당 위치에 속성을 바인딩 한다는 의미
 
 한번 화면에 렌더링 된 데이터를 반영하면, DOM이 자동으로 변경됨
+
+
 
 
 
@@ -426,6 +456,8 @@ Var app = new Vue({
 <p>{{ list[2] }}</p>					# 딸기
 <p>{{ list[num] }}</p>					# 바나나
 ```
+
+
 
 
 
@@ -465,6 +497,8 @@ Var app = new Vue({
 
 
 
+
+
 ##### 메서드 내부에서 데이터 또는 다른 메서드에 접근하기
 
 메서드 내부에서는 this를 붙여야 함
@@ -474,6 +508,8 @@ this는 인스턴스를 나타내며
 new Vue() 로 생성된 인스턴스, new Vue() 로 생성된 인스턴스의 리턴값을 나타냄
 
 예시) 인스턴스가 컴포넌트라면, this는 컴포넌트 인스턴스 자체를 나타냄
+
+
 
 
 
@@ -497,6 +533,8 @@ methods: {
 
 
 
+
+
 ##### 여러개의 속성 데이터 바인딩
 
 ```javascript
@@ -516,6 +554,8 @@ Var app = new Vue({
 <img v-bind="item">  //한 번에 바인딩 가능
 <img v-bind="item" v-bind:id="'thumb-'+item.id">  //특정 요소만 따로 지정도 가능
 ```
+
+
 
 
 
@@ -576,3 +616,370 @@ v-else-if와 v-else 디렉티브를 조합해 여러개 조건 지정 가능
 컴포넌트나 디렉티브 없고, 변경 빈도 높을 경우 유리
 
 그룹으로 만들어 단일 요소에 사용 불가능
+
+
+
+#### 10. 리스트 데이터 출력/변경 하기
+
+##### 요소 반복해 렌더링하기
+
+```html
+<li v-for="각 요소를 할당할 변수 이름" in "반복 대상인 배열 혹은 객체"></li>
+```
+
+
+
+예시
+
+```html
+<div id="app">
+    <ul>
+        // id와 같은 유니크 키가 있어야 DOM으로 렌더링할 때 최적화가 이루어진다.
+        // list라는 이름은 data에서 가져왔지만 item 이라는 이름은 본인이 지정
+        <li v-for="item in list" v-bind:key="item.id">
+            // item이라는 변수명을 아래와 같이 활용 가능(item 속성에 접근 가능)
+            ID.{{ item.id }} {{ item.name }} HP. {{ item.hp }}
+        </li>
+    </ul>
+</div>
+```
+
+```javascript
+new Vue({
+    el: '#app'
+    data: {
+    	list: [
+    		{ id : 1, name: '가', hp: 100},
+        	{ id : 2, name: '나', hp: 200},   
+    		{ id : 3, name: '다', hp: 500},   
+    	]
+	}
+})
+```
+
+list 배열에서 v-for 디렉티브를 사용해 요소를 한 개씩 추출
+
+반복 변수로 item이라는 이름 사용, item 속성에 접근해 이름과 hp 출력
+
+
+
+
+
+##### 인덱스와 객체 키 사용하기
+
+변수 부분을 괄호로 감싸면 배열의 인덱스를 받을 수 있음
+
+```html
+<li v-for="(item, index) in list">...</li>
+```
+
+
+
+객체의 경우 '<값><키><인덱스>' 순서
+
+```html
+<li v-for="(item, key, index) in list">...</li>
+```
+
+
+
+
+
+##### 키의 역할
+
+리스트를 변경할 때 요소의 식별과 효율적인 렌더링 처리를 위해
+
+요소에 유니크한 key 속성을 설정하는 것이 권장됨
+
+
+
+why? (item1을 제거했을 경우)
+
+- key가 없는 경우: 요소 전체를 변경해야함
+- key가 있는 경우: 삭제된 key의 DOM이 제거될 뿐
+
+
+
+id 속성을 key로 데이터 바인딩 하는것이 적합함
+
+같은 요소 내부에서 v-for을 두번 사용하면 key 중복이 일어나 오류 발생
+
+
+
+
+
+##### 반복 렌더링하며 다양한 조건 적용하기
+
+```html
+<li v-for="item in list" v-bind:key="item.id" v-if="item.hp < 300 ">
+	ID.{{ item.id }} {{ item.name }} HP. {{ item.hp }}
+</li>
+```
+
+
+
+
+
+##### 리스트에 요소 추가하기
+
+```html
+<input v-model="name">
+<button v-on:click="doAdd">몬스터 추가하기</button>
+<ul>
+    <li v-for="item in list" v-bind:key="item.id" v-if="item.hp < 300 ">
+        ID.{{ item.id }} {{ item.name }} HP. {{ item.hp }}
+    </li>
+</ul>
+```
+
+```javascript
+new Vue({
+	el: '#app',
+    data: {
+        name: '카메라',
+        list: [
+            { id : 1, name: '슬라임', hp: 100},
+        	{ id : 2, name: '고블린', hp: 200},   
+    		{ id : 3, name: '드래곤', hp: 500},   
+        ]
+    },
+    methods: {
+        doAdd: function() {
+            var max = this.list.reduce(function(a,b) {
+                return a > b.id ? a : b.id 		// a가 b.id보다 크면 a, 작으면 b.id
+            }, 0)
+            this.list.push({
+                id: max + 1,
+                name: this.name,
+                hp: 500,
+            })
+        }
+    }
+})
+```
+
+data가 아닌 methods 내부에 있어도 v-model과 연동이 가능(name)
+
+
+
+
+
+##### 리스트에서 요소 제거하기
+
+배열 메서드인 splice 사용
+
+
+
+```html
+<ul>
+    <li v-for="item in list" v-bind:key="item.id" v-if="item.hp < 300 ">
+        ID.{{ item.id }} {{ item.name }} HP. {{ item.hp }}
+        <button v-on:click="doRemove(index)">몬스터 제거하기</button>
+    </li>
+</ul>
+```
+
+v-for 요소 안에 button을 만들어 어떤 요소를 삭제할 지 구별할 수 있게 함
+
+
+
+```javascript
+new Vue({
+	el: '#app',
+	//..
+    methods: {
+        doRemove: function(index) {
+            // 전달받은 index 위치에서 1개만큼 제거하기
+			this.list.splice(index, 1)
+        }
+    }
+})
+```
+
+
+
+이 외에도
+
+push, pop, shift, unshift, splice, sort, reverse 등 다양한 조작 가능
+
+
+
+
+
+##### 리스트 요소 변경하기
+
+Vue.js는 인덱스 숫자를 사용한 배열 요소 변경이 불가능
+
+```
+ this.list[0] = { id : 1, name: '가', hp: 500 }
+```
+
+
+
+Vue.set 메서드 사용: `this.$set`을 사용해 변경
+
+```
+this.$set('변경할 데이터', 'index or key', '새로운 값')
+```
+
+```
+this.$set('this.list', '0', '{ id : 1, name: '나', hp: 500 }')
+```
+
+
+
+
+
+##### 속성 추가하기
+
+this.$set은 존재하지 않는 속성을 리액티브 데이터로 추가할 때도 사용
+
+```javascript
+new Vue({
+	el: '#app',
+    data: {
+        list: [
+            { id : 1, name: '슬라임', hp: 100},
+        	{ id : 2, name: '고블린', hp: 200},   
+    		{ id : 3, name: '드래곤', hp: 500},   
+        ]
+    },
+    created: function() {
+        this.list.forEach(function(item) {
+            this.$set(item, 'active', false)
+        }, this)
+    }
+    }
+})
+```
+
+list 모든 요소에 active라는 속성을 추가
+
+
+
+
+
+##### 리스트 요소 속성 변경하기
+
+```html
+<ul>
+    <li v-for="(item, index) in list" v-bind:key="item.id" v-if="item.hp">
+        <span v-if="item.hy < 50"> 큰 피해..! </span>
+        <button v-on:click="doAttack(index)">공격하기</button>
+    </li>
+</ul>
+```
+
+```javascript
+new Vue({
+	el: '#app',
+	//..
+    methods: {
+        doAttack: function(index) {
+            this.list[index].hp -= 10
+        }
+    }
+})
+```
+
+
+
+
+
+##### 리스트 자체 변경하기
+
+filter 등을 이용해 리스트에 리턴값 다시 할당
+
+```
+this.list = this.list.filter(function(el) {
+	return el.hp >= 100
+})
+```
+
+
+
+
+
+##### 유니크 키가 없는 배열
+
+어떤 조작을 가하기에 적합하지는 않지만 단순 출력 용도면 괜찮음
+
+
+
+
+
+##### 리터럴에 v-for 적용하기
+
+```html
+<span v-for="item in 15">{{ item }}</span>
+```
+
+```html
+<span v-for="item in [5, 10, 15, 20]"></span>
+```
+
+
+
+
+
+##### 문자열에 v-for 적용하기
+
+
+
+```html
+<span v-for="item in text">{{ item }}</span>
+```
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        text: 'Vue'
+    }
+})
+```
+
+
+
+실제렌더링
+
+```html
+<span>V</span>
+<span>u</span>
+<span>e</span>
+```
+
+이를 활용해 다양한 텍스트 애니메이션을 만들 수 있다.
+
+
+
+##### 외부에서 데이터 가져와서 출력하기
+
+데이터가 외부에 있는 경우: JSON 파일 또는 웹 API를 사용해 가져와야함
+
+Ajax 라이브러리 'axios' 사용하기
+
+
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        // axios로 받아온 데이터를 담은
+        // 빈 리스트 미리 준비하기
+        list: []
+    },
+    created: function() {
+    	axios.get('list.json')
+        .then(function(response){
+            this.list = response.data
+        }.bind(this))
+        .catch(function(e){
+            console.error(e)
+        })
+	}
+})
+```
+
+
+
