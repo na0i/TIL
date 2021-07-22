@@ -953,6 +953,8 @@ new Vue({
 
 
 
+
+
 ##### 외부에서 데이터 가져와서 출력하기
 
 데이터가 외부에 있는 경우: JSON 파일 또는 웹 API를 사용해 가져와야함
@@ -983,3 +985,217 @@ new Vue({
 
 
 
+
+
+#### 11. DOM을 직접 참조하는 $el과 $refs
+
+데이터 바인딩 → DOM에 직접 접근하지 않아도 내용 변경 가능
+
+BUT, 요소의 위치와 높이는 DOM에 직접 접근해야 확인할 수 있음
+
+
+
+DOM에 접근할 때는 인스턴스 속성 `$el`과 `$refs`를 사용
+
+DOM을 참조해야 사용할 수 있는 것이므로 **mounted 이후부터 사용 가능**
+
+
+
+
+
+##### $el의 사용 방법
+
+$el: element의 약어
+
+컴포넌트 템플릿을 감싸고 있는 루트 요소는 $el을 사용해서 DOM을 직접 참조 가능
+
+```javascript
+new Vue({
+	el: '#app',
+    mounted: function(){
+        console.log(this.$el)
+    }
+})
+```
+
+
+
+
+
+##### $ref의 사용 방법
+
+루트 이외의 요소는 특별한 속성 ref와 $refs를 사용해 참조 가능
+
+
+
+템플릿에서 대상 요소에  ref 속성을 지정하고 이름을 붙여줌
+
+```html
+<div id="app">
+    <p ref="hello">Hello</p>
+</div>
+```
+
+그 후 인스턴스 메서드 내부에서 접근 가능
+
+```javascript
+new Vue({
+	el: '#app',
+    mounted: function(){
+        console.log(this.$refs.hello)
+    }
+})
+```
+
+
+
+
+
+##### $el과 $refs는 일시적인 변경
+
+$el과 $refs는 가상 DOM을 사용하지 X → 렌더링 최적화 X
+
+조작이 발생할 때마다 다시 렌더링 되므로, 자주 변경되는 DOM에는 사용 부적합
+
+
+
+```html
+<div id="app">
+    <button v-on:click="handleClick">Count up</button>
+    <button v-on:click="show=!show">표시/비표시</button>
+    <span ref="count" v-if="show">0</span>
+</div>
+```
+
+
+
+```javascript
+new Vue({
+	el: '#app',
+    data: {
+        show: true
+    },
+    methods: {
+        handleClick: function(){
+            var count = this.$refs.count
+            if (count) {
+                count.innerText = parseInt(count, innerText, 10) + 1
+            }
+        }
+    }
+})
+```
+
+Count up 버튼을 여러번 누르더라도, v-if로 변경이 일어나면 다시 '0'으로 돌아옴
+
+직접 DOM을 사용해 텍스트를 변경한 것은 가상 DOM에 영향을 끼치지 못함
+
+
+
+
+
+#### 12. 템플릿 제어 디렉티브
+
+템플릿 또는 컴파일 제어를 위한 디렉티브
+
+| 디렉티브 | 설명                                 |
+| -------- | ------------------------------------ |
+| v-pre    | 템플릿 컴파일 생략하기               |
+| v-once   | 한 번만 바인딩                       |
+| v-text   | Mustache 대신 텍스트 콘텐츠로 렌더링 |
+| v-html   | html 태그 그대로 렌더링              |
+| v-clock  | 인스턴스 준비가 끝나면 제거          |
+
+
+
+
+
+##### v-pre
+
+자식 컴포넌트를 포함한 내부의 html을 컴파일하지 않고, 정적 콘텐츠로 다룰 때 사용
+
+
+
+```html
+<a v-bind:href="url" v-pre>
+	Hello {{ message }}
+</a>
+```
+
+Hello {{ message }} 로 그대로 출력
+
+
+
+
+
+##### v-once
+
+템플릿을 한 번만 컴파일하고 이후에는 정적 콘텐츠로 다룸
+
+
+
+```html
+<a v-bind:href="url" v-once>
+	Hello {{ message }}
+</a>
+```
+
+
+
+
+
+##### v-text
+
+요소 내부의 텍스트 콘텐츠가 단일 Mustache만으로 구성되어 있을 경우,
+
+v-text 디렉티브를 사용해 텍스트 콘텐츠 바인딩 가능
+
+
+
+
+
+##### v-html
+
+html 태그를 직접 출력하고 싶을 때
+
+
+
+
+
+##### v-cloak
+
+인스턴스 준비가 끝나면 자동으로 제거
+
+
+
+```html
+<div id="app" v-cloak>
+    {{ message }}
+</div>
+```
+
+
+
+```css
+[v-cloak] { display: none; }
+```
+
+```css
+@keyframes cloak-in {
+    0% { opacity: 0; }
+}
+
+#app {
+    animation: cloak-in 1s;
+}
+
+#app[v-cloak] {
+    opacity: 0;	// 불투명도 100%
+}
+```
+
+v-cloak 속성이 사라질 때 fade in 효과
+
+
+
+### CHAPTER 03_이벤트와 입력 양식
