@@ -10,3 +10,8 @@ https://velog.io/@eona1301/Github-Blog-%ED%8F%AC%EC%8A%A4%ED%8C%85-%EA%B8%80-%EC
 
 ![화상화면](/uploads/59cc08cd96c0ee6aaa0e966b66431aad/화상화면.png)
 
+
+
+![210726](https://user-images.githubusercontent.com/77482972/127085536-fff8d49e-5dbe-47c1-981f-1acb3cd2dfd9.JPG)
+
+![D](https://user-images.githubusercontent.com/77482972/127085558-4bf028c9-6e88-4a21-8566-f618bb9c0ea8.png)
