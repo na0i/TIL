@@ -1198,4 +1198,668 @@ v-cloak 속성이 사라질 때 fade in 효과
 
 
 
+---------------
+
 ### CHAPTER 03_이벤트와 입력 양식
+
+#### 13. 이벤트 핸들링
+
+`이벤트 핸들러` : 이벤트의 처리 내용
+
+`핸들` : 이벤트 핸들러를 이벤트와 연결하는 것
+
+
+
+Vue.js에서는 템플릿 내부에 **v-on** 디렉티브를 이용해 이벤트를 연결
+
+v-on은 생략해서 **@**로 작성할 수 있음
+
+
+
+```html
+<button v-on:click="이벤트 핸들러">클릭</button>
+
+예시)
+<button v-on:click="onClick">클릭</button>
+<button @click="onClick">클릭</button>
+```
+
+```javascript
+new Vue({
+    el: '#app',
+    methods: {
+        onClick: function(){
+            alert('클릭')
+        }
+    }
+})
+```
+
+
+
+
+
+##### 인라인 메서드 핸들링
+
+디렉티브 값에 자바스크립트 식을 직접 작성
+
+가독성을 위해 재사용을 거의 하지 않는 짧은 식에만 사용하는 것이 좋다
+
+```html
+<button v-on:click="count++">클릭</button>
+```
+
+
+
+인라인 메서드 핸들러에서는
+
+이벤트 객체 or 사용자 정의 이벤트 매개변수를 `$event`라는 변수 이름으로 사용할 수 있음
+
+(발생한 이벤트의 정보 자체를 가지고 있는 이벤트 객체)
+
+```html
+<button v-on:click="handleClick($event, item)">클릭</button>
+```
+
+
+
+
+
+##### 사용할 수 있는 이벤트
+
+예시1) 이미지 로드가 종료될 때 트랜지션 출력
+
+```html
+<img src="image.png" v-on:load="show=true" v-bind:class="{hide=!show}">
+```
+
+```css
+img {
+    opacity: 1;
+    transition: opacity 1s;
+}
+
+img.hide {
+    opacity: 0;
+}
+```
+
+[예시 이해해보기]
+
+처음엔 opacity가 1
+
+v-on:load → 로드가 완료된 후
+
+show=true → show는 true라는 값을 가지고
+
+hide=!show 이므로 → hide는 false값
+
+opacity가 0이 됨
+
+
+
+예시2) 동일한 handler 사용
+
+```html
+<div v-on:scroll="handler">콘텐츠</div>
+<div v-on:mousewheel="handler">콘텐츠</div>
+```
+
+
+
+
+
+##### 입력 양식 입력 추출하기
+
+v-model이 아닌 v-on을 사용해서도 입력 내용 확인, 데이터 할당 가능
+
+
+
+```html
+<input v-bind:value="message" v-on:input="handleInput"> 
+```
+
+```javascript
+new Vue({
+    el: '#app,'
+    data: {
+    	message: 'Hello Vue.js'
+	},
+    methods: {
+    	handleInput: function(event){
+    		this.message = event.target.value
+		},    
+    },
+})
+```
+
+[예시 이해해보기]
+
+원래는 value가 Hello Vue js
+
+input 이벤트 발생하면 message가 event.target의 value(input의 value)로 변경
+
+
+
+##### 이벤트 장식자
+
+이벤트 장식자: DOM 이벤트의 기본적인 동작을 변경
+
+| 장식자   | 설명                           |
+| -------- | ------------------------------ |
+| .stop    | event.stopPropagation()을 호출 |
+| .prevent | event.preventDefault()를 호출  |
+| .once    | 한 번만 핸들                   |
+
+
+
+##### stop: 이벤트 버블링을 막음
+
+(**이벤트 버블링**: 특정 화면 요소에서 이벤트가 발생했을 때 해당 이벤트가 더 상위의 화면 요소들로 전달되어 가는 특성)
+
+86 p 나중에
+
+- 1️⃣2️⃣3️⃣4️⃣5️⃣6️⃣7️⃣8️⃣9️⃣🔟
+
+
+
+클릭 이벤트 장식자
+
+| 장식자  | 설명                                       |
+| ------- | ------------------------------------------ |
+| .left   | 마우스 왼쪽 버튼을 눌렀을 때 핸들러 호출   |
+| .right  | 마우스 오른쪽 버튼을 눌렀을 때 핸들러 호출 |
+| .middle | 마우스 중간 버튼으로 눌렀을 때 핸들러 호출 |
+
+
+
+
+
+##### 키 장식자
+
+| 별칭                          | 의미                  |
+| ----------------------------- | --------------------- |
+| .enter                        | enter 키를 눌렀을 때  |
+| .tab                          | tab 키를 눌렀을 때    |
+| .delete                       | delete 키를 눌렀을 때 |
+| .space                        | space 키를 눌렀을 때  |
+| .up / .down / . left / .right | ↑ / ↓  / ← / →        |
+
+
+
+##### 시스템 장식자
+
+| 별칭   | 의미                 |
+| ------ | -------------------- |
+| .ctrl  | ctrl 키를 눌렀을 때  |
+| .alt   | alt 키를 눌렀을 때   |
+| .shift | shift 키를 눌렀을 때 |
+
+
+
+
+
+#### 14. 입력 양식 입력 핸들링
+
+`v-model` : 폼 값 또는 선택값을 데이터와 동기화 하는 **양방향 데이터 바인딩** 을 실시할 때 사용
+
+
+
+##### v-model 사용방법
+
+```html
+<div id="app">
+    <input v-model="message">
+    <p>{{ message }}</p>
+</div>
+```
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        message: 'Hello'
+    },
+})
+```
+
+
+
+
+
+##### Vue.js의 양방향 데이터 바인딩
+
+v-model 디렉티브는 두가지 처리를 한번에 작성할 수 있게 함
+
+- 1️⃣ 데이터 바인딩으로 요소의 value 속성 변경
+- 2️⃣ 이벤트 핸들링으로 받은 값 데이터에 대입
+
+
+
+1️⃣ 데이터 바인딩
+
+데이터 변경을 감지할 때마다 연결된 DOM 요소를 자동으로 변경
+
+
+
+    data: {
+        message: 'Hello'
+    },
+데이터
+
+| 속성    | 값     |
+| ------- | ------ |
+| message | Hello! |
+
+입력 양식에 Hello! 보임
+
+
+
+2️⃣ 이벤트 바인딩하기
+
+input 요소처럼 사용자로부터 어떤 입력을 받는 DOM 요소의 경우
+
+입력 이벤트를 트리거로 하여 데이터를 얻을 수 있음
+
+
+
+입력양식(Hello) → input 이벤트 발생(Vue.js) → 입력양식(Vue.js == event.target.value)
+
+
+
+위와 같은 1️⃣, 2️⃣ 과정을 자동화 해주는 것이 v-model 디렉티브
+
+
+
+
+
+##### v-model로 받은 데이터의 자료형
+
+일반적인 입력양식은 모든 값을 **문자열 자료형**으로 다룸
+
+여러개를 선택할 수 있는 입력양식의 경우에는 값을 **배열**로 다룸
+
+- **텍스트에리어** : 문자열(단, mustache 사용한 데이터 바인딩 불가능)
+
+- **체크박스**
+
+  - 하나의 요소를 선택할 경우: 기본적으로 Boolean
+
+    ```html
+    <label>
+    	<input type="checkbox" v-model="val">
+        {{ val }}
+    </label>
+    ```
+
+    ```javascript
+    new Vue({
+        el: '#app',
+        data: {
+            val : true
+        }
+    })
+    ```
+
+    
+
+    
+
+    체크 상태에 따라 요소에 값 설정
+
+    true-value와 false-value라는 특별한 속성 사용하기
+
+    ```html
+    <input type="checkbox" v-model="val" true-value="yes" false-value="no">
+    ```
+
+    
+
+  - 여러개의 요소를 선택: 배열
+
+    각각의 요소에 value 속성을 설정하는 형태로 사용
+
+    ```html
+    <label><input type="checkbox" v-model="val" value="A">A</label>
+    <label><input type="checkbox" v-model="val" value="B">B</label>
+    <label><input type="checkbox" v-model="val" value="C">C</label>
+    ```
+
+    ```javascript
+    new Vue({
+        el: '#app',
+        data: {
+            val : []
+        }
+    })
+    ```
+
+- **라디오버튼** : 기본적으로 문자열
+
+  (라디오 버튼: 여러 개의 항목 중에서 하나만 선택하도록 하는 동그란 버튼)
+
+  ```html
+  <label><input type="checkbox" v-model="val" value="A">A</label>
+  <label><input type="checkbox" v-model="val" value="B">B</label>
+  <label><input type="checkbox" v-model="val" value="C">C</label>
+  ```
+
+  ```javascript
+  new Vue({
+      el: '#app',
+      data: {
+          val : ''
+      }
+  })
+  ```
+
+- **선택 박스**
+
+  - 하나의 요소를 선택
+
+    ```html
+    <select v-model="val">
+        <option disabled="disabled">선택해주세요.</option>
+        <option value="a">A</option>
+        <option value="b">B</option>
+        <option value="c">C</option>
+    </select>
+    ```
+
+    ```javascript
+    new Vue({
+        el: '#app',
+        data: {
+            val : ''
+        }
+    })
+    ```
+
+    
+
+  - 여러 요소를 선택
+
+    ```html
+    <select v-model="val" multiple>
+        <option value="a">A</option>
+        <option value="b">B</option>
+        <option value="c">C</option>
+    </select>
+    ```
+
+    ```javascript
+    new Vue({
+        el: '#app',
+        data: {
+            val : []
+        }
+    })
+    ```
+
+- **이미지 파일**: v-model 디렉티브 사용 불가 → change 이벤트 이용해 바인딩
+
+  97 P 참고
+
+- **다른 입력 타입**
+
+  - range
+
+    ```html
+    <input type="range" v-model.number="val">{{ val }}
+    ```
+
+    ```javascript
+    new Vue({
+        el: '#app',
+        data: {
+            val : 50
+        }
+    })
+    ```
+
+    기본적으로 input 요소의 값은 문자열이므로
+
+    숫자 등으로 받고 싶을 때는 `.number` 장식자 등을 활용
+
+
+
+
+
+##### v-model 디렉티브의 장식자
+
+| 장식자  | 의미                                                         |
+| ------- | ------------------------------------------------------------ |
+| .lazy   | input 대신 change 이벤트 핸들링하기<br />기본적으로 입력 양식은 입력이 되는 시점에 동기화<br />but, .lazy를 사용하면 change 이벤트가 발생하는 시점에 변경 |
+| .number | 값을 숫자로 변환                                             |
+| .trim   | 값 양쪽에 있는 쓸데없는 공백 제거<br />줄바꿈 또는 공백 등의 여백을 제거 |
+
+
+
+
+
+#### 15. 마운트 요소 외의 이벤트 조작
+
+window와 body는 v-on을 사용할 수 x
+
+따라서, window 객체는 addEventListener 메서드를 사용
+
+하지만, v-on과 다르게 없어지는 경우에 핸들러가 자동으로 없어지지 X
+
+즉, 불필요해지는 경우 사전에 훅을 이용해 핸들러를 제거해야함
+
+
+
+100P 참고(scroll을 활용한 이벤트)
+
+
+
+##### 스무스 스크롤 구현하기
+
+트윈(tween) 계열의 라이브러리 사용해 쉽게 구현 가능
+
+
+
+-----------
+
+### CHAPTER 04_데이터 감시하고 가공하기
+
+#### 16. 산출 속성으로 처리 포함한 데이터 만들기
+
+`산출 속성` : 처리를 포함하고 있는 데이터
+
+
+
+
+
+##### 산출 속성 사용 방법
+
+산출 속성: 임의의 데이터를 리턴하는 함수를 compute 옵션에 정의
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        width: 800
+    },
+    computed: {
+        halfWidth: function(){
+            return this.width / 2
+        }
+    }
+})
+```
+
+```html
+<p>
+    {{ width }}의 절반은 {{ halfWidth }}입니다.
+</p>
+```
+
+
+
+
+
+##### 산출 속성 조합해서 사용하기
+
+산출 속성을 사용해 다른 산출 속성 정의 가능
+
+산출 속성을 여러개로 구분한 뒤 조합해서 사용하면 다양한 활용 가능
+
+
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        width: 800,
+        height: 400,
+    },
+    computed: {
+        halfWidth: function(){
+            return this.width / 2
+        },
+        halfHeight: function(){
+            return this.height / 2
+        },
+        halfPoint: function(){
+            return {
+                x : this.halfWidth,
+                y : this.halfHeight
+            }
+        }
+    }
+})
+```
+
+
+
+
+
+##### 게터와 세터
+
+산출 속성은 기본적으로 원래 데이터에 영향을 끼치지 X
+
+따라서, 산출 속성에 값을 대입하면 오류 발생
+
+
+
+세터를 활용해 해결 가능
+
+세터: get과 set 속성을 함수로 정의
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        width: 800
+    },
+    computed: {
+        halfWidth: 
+        	get: function() { return this.width / 2 },
+        	set: function(val) { this.width = val * 2}
+    }
+})
+```
+
+
+
+
+
+##### 산출 속성 캐시 기능
+
+산출 속성
+
+- 리액티브 데이터를 기반으로 결과를 캐시
+- 캐시의 트리거가 되는 것은 리액티브 데이터뿐
+
+
+
+```html
+<ol>
+    <li>{{ computedData }}</li>
+    <li>{{ computedData }}</li>
+</ol>
+<ol>
+    <li>{{ methodsData }}</li>
+    <li>{{ methodsData }}</li>
+</ol>
+```
+
+```javascript
+new Vue({
+    el: '#app',
+    computed: {
+        computedData: function(){ return Math.random() }
+    },
+    methods: {
+        methodsData: function(){ return Math.random() }
+    }
+})
+```
+
+위의 예시에서, 
+
+computed의 computedData는
+
+Math.random()이 리액티브 데이터가 아니므로, 몇번을 실행해도 같은 숫자 리턴됨
+
+
+
+
+
+##### 리스트 필터링
+
+산출 속성은 원래 데이터에 변경이 있을 때까지 처리를 추가로 실행하지 X
+
+```html
+<div id="#app">
+    <input v-model.number="budget">원 이하 필터링하기 
+    <input v-model.number="limit">개의 결과 필터링하기
+    <p>{{ matched.length }}개 중에 {{ limited.length }}개를 출력하고 있습니다.</p>
+    <ul>
+        <li v-for:"item in limited" v-bind:key="item.id">
+        	{{ item.name }} {{ item.price }}원
+        </li>
+    </ul>
+</div>
+```
+
+```javascript
+new Vue({
+    el: '#app',
+    data: {
+        budget: 300,
+        limit: 2,
+        list: [
+            { id: 1, name: '사과', price: 100 },
+            { id: 2, name: '바나나', price: 200 },
+            { id: 3, name: '딸기', price: 300 },
+            { id: 4, name: '메론', price: 400 },
+            { id: 5, name: '오렌지', price: 500 },
+        ],
+    },
+    computed: {
+        matched: function() {
+            return this.list.filter(function(el) {
+                return el.price <= this.budget
+            }, this)
+        },
+        limited: function() {
+            return this.matched.slice(0, this.limit)
+        }
+    }
+})
+```
+
+112p
+
+
+
+※ filter
+
+```
+Array.prototype.filter ( callbackfn [ , thisArg ] )
+```
+
+
+
