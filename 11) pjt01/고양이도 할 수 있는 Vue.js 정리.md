@@ -1859,7 +1859,384 @@ new Vue({
 
 ```
 Array.prototype.filter ( callbackfn [ , thisArg ] )
+
+
+filter 함수의 매개변수는 callbackFunction 과 thisArg 
+
+callbackFunction는 3개의 매개변수를 사용
+
+element : 요소값
+index : 요소의 인덱스
+array : 사용되는 배열 객체
 ```
 
 
+
+
+
+##### 정렬 기능 추가하기
+
+sort는 배열을 직접 조작 → 원래 데이터의 순서를 변화시킴
+
+산출 속성은 데이터에 직접적인 영향을 주는 조작을 하면 안됨
+
+
+
+so, 얕은 복사 사용 or Lodash 등의 라이브러리를 사용해야함
+
+```
+this.list.sort() → 원래 list 속성도 함께 변경
+this.list.slice(0).sort → 요소의 리액티브를 유지하며 배열 복사(0개를 자르니까 전체 복사)
+```
+
+
+
+```javascript
+data: {
+    order: false
+},
+computed: {
+    sorted: function() {
+        return _.orderBy(this.matched, 'price', this.order ? 'desc' : 'asc')
+    },
+    limited: function() {
+        return this.sorted.slice(0, this.limit)
+    }
+}
+```
+
+
+
+※ _.orderBy
+
+```
+_.orderBy(a,b,c) a의 b 값을 c 기준으로 정렬
+
+'desc' : 내림차순
+'asc' : 오름차순
+```
+
+
+
+
+
+
+
+#### 17. 워처로 데이터 감시해서 처리 자동화
+
+일단 프로젝트 급하니까 여기는
+
+나중에 다시 정리
+
+
+
+--------------
+
+### CHAPTER 05_컴포넌트로 UI 부품 만들기
+
+#### 21. 컴포넌트란
+
+컴포넌트: 기능을 가진 UI 부품별로 템플릿과 자바스크립트를 세트로 묶어, 다른 UI 부품과 분리해서 개발하거나 관리할 수 있게 하는 방법
+
+
+
+
+
+#### 22. 컴포넌트 정의 방법
+
+부모가 되는 컴포넌트 템플릿에 사용자 정의 태그를 작성
+
+```html
+<div id="app">
+    <my-component></my-component>
+</div>
+```
+
+
+
+**data는 함수여야 함**
+
+데이터는 객체를 리턴하는 함수로 정의해야 함
+
+여러개의 컴포넌트 인스턴스들이 같은 객체를 참조해서 상태가 공유되는 것을 회피하기 위해
+
+
+
+**루트 요소는 하나여야 함**
+
+
+
+##### 컴포넌트 인스턴스
+
+```html
+<div id="app">
+    <my-component></my-component>
+    <my-component></my-component>
+</div>
+```
+
+같은 컴포넌트를 여러번 사용할 경우, my-component를 기반으로 만들어진
+
+완전히 다른 인스턴스로 취급됨
+
+
+
+
+
+#### 23. 컴포넌트끼리의 통신
+
+컴포넌트 인스턴스는 각각 스코프를 가지고 있음
+
+
+
+스코프
+
+- 영향을 미칠 수 있는 범위
+- 간단하게 정의한 데이터, 메서드, 템플릿
+- 스코프 내부의 데이터와 메서드는 this를 사용해 접근 가능
+- 실수로 다른 기능에 영향을 미치지 않게 하기 위한 것
+
+
+
+스코프 덕분에 다른 컴포넌트에 있는 데이터와 메서드에 직접 접근할 수 X
+
+so, 컴포넌트 끼리 데이터를 공유하거나 연동하기 위해서는 
+
+1️⃣ props를 이용해 부모 자식간의 통신
+
+2️⃣ 이벤트 버스를 사용해 통신
+
+3️⃣ Vuex 사용한 상태관리
+
+
+
+
+
+##### 부모 자식 컴포넌트
+
+템플릿에서 다른 컴포넌트를 사용하면 부모자식 관계가 만들어짐
+
+이렇게 네스트된 컴포넌트는 DOM처럼 트리 구조를 갖게 됨
+
+
+
+##### 부모에서 자식으로
+
+부모: val은 사용해도 괜찮아
+
+```html
+<comp-child v-bind:val="message" class="item"></comp-child>
+```
+
+
+
+자식: val을 사용할게
+
+```
+props: ['val']
+```
+
+template에 val 사용가능
+
+
+
+
+
+##### 컴포넌트를 리스트 렌더링하기
+
+부모
+
+```html
+<ul>
+    <comp-child v-for="item in list"
+    	v-bind:key="item.id"
+        v-bind:name="item.name"
+        v-bind:hp="item.hp">
+    </comp-child>
+</ul>
+```
+
+
+
+자식
+
+```html
+<li>{{ name }} {{ hp }}</li>
+
+props: ['name', 'hp']
+```
+
+
+
+
+
+##### props로 전달받은 데이터는 마음대로 변경하면 안됨
+
+props는 리액티브 상태이므로 부모쪽에서 데이터를 변경하면 자식 쪽의 상태도 변경
+
+but, props 속성은 부모에서 빌린것이므로
+
+자식 컴포넌트에서 값을 마음대로 변경하면 X
+
+
+
+
+
+##### props로 받을 자료형 지정하기
+
+지정한 자료형 이외의 값이 들어올 경우,
+
+경고도 출력되므로 문제가 발생했을 경우 쉽게 찾을 수 있다.
+
+
+
+```javascript
+Vue.component('example', {
+    props: {
+	val: String,
+    // 기본적 자료형 확인
+	propA: Number,
+    
+    // 여러개 자료형 지정가능
+	propB: [String, Number],
+        
+    // 필수 문자열    
+	propC: {
+		type: String,
+		required: true
+	},
+    
+    // 디폴트 값
+	propD: {
+		type: Number,
+		default: 100
+	},
+        
+    // 객체와 배열의디폴트 값
+	propE: {
+		type: Object,
+		default: function(){
+			return { message: 'hello '}
+		}
+	},
+        
+    // 사용자 정의 유효성 검사 함수
+    propF: {
+        validator: function(value) {
+            return value > 10
+        }
+    }
+}
+})
+```
+
+
+
+
+
+##### 자식에서 부모로
+
+자식 컴포넌트가 가진 데이터를 부모 컴포넌트에 전달하고 싶을 때는
+
+사용자 정의 이벤트와 `$emit` 이라는 인스턴스 메서드를 사용
+
+
+
+**자식 이벤트를 부모에서 잡기**
+
+부모에서 자식 사용자 정의 태그를 작성할 때 v-on(@)으로 이벤트를 핸들
+
+자식은 적당한 시점에서 $emit을 사용해 이벤트를 실행
+
+
+
+자식
+
+```html
+<button v-on:click="handleClick">
+    이벤트 호출하기
+</button>
+```
+
+```javascript
+methods: {
+    handleClick: function() {
+        this.$emit('child-event')
+    }
+}
+```
+
+
+
+부모
+
+```html
+<comp-child v-on:child-event="parentMethods"></comp-child>
+```
+
+```javascript
+methods: {
+    parentMethod: function() {
+        alert('이벤트 받음!')
+    }
+}
+```
+
+
+
+
+
+##### 부모 자식 컴포넌트가 아닌 경우(이벤트 버스)
+
+부모 자식 컴포넌트가 아닌 컴포넌트들끼리 데이터를 전달할 경우
+
+Vue 인스턴스의 이벤트 버스라는 기능을 사용
+
+157P
+
+
+
+
+
+##### 자식 컴포넌트를 참조하는 $refs
+
+`ref`: 경우에 따라서 부모에서 자식의 메서드 혹은 이벤트를 호출하고 싶은 경우도 있음
+
+
+
+부모
+
+```html
+<comp-child ref="child"></comp-child>
+```
+
+```javascript
+this.$refs.child.$emit('open')
+```
+
+
+
+자식
+
+```
+created: function() {
+	this.$on('open', function() {
+		...
+	})
+}
+```
+
+
+
+
+
+##### 컴포넌트 속성의 스코프
+
+자식 컴포넌트에서 전달된 매개변수는 $event로 접근 가능
+
+
+
+```html
+<comp-child v-on:childs-events="parentsMethod($event, parentsData)"></comp-child>
+```
 
